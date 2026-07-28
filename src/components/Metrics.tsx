@@ -58,7 +58,7 @@ export function Metrics({ basis, onBasisChange, now }: MetricsProps) {
           return (
             <li className="metric" key={metric.id}>
               <span className="metric-icon" aria-hidden="true">
-                <Icon size={48} strokeWidth={2.8} absoluteStrokeWidth />
+                <Icon size={48} strokeWidth={3} absoluteStrokeWidth />
               </span>
               <div className="metric-body">
                 <div className="metric-value">
