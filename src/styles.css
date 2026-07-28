@@ -1,0 +1,550 @@
+/* ---------------------------------------------------------------- tokens */
+
+:root {
+  --bg: #0b0d10;
+  --bg-footer: #06080a;
+  --surface: #14181d;
+  --surface-hover: #1a1f26;
+  --border: #232a33;
+  --border-strong: #323b47;
+  --text: #f2f5f8;
+  --text-muted: #8b97a6;
+  --text-faint: #616d7c;
+  --accent: #ff5c5c;
+  --accent-dim: #b13a3a;
+  --accent-bg: rgba(255, 92, 92, 0.1);
+  --focus: #6ea8fe;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+
+  /* Šířka obsahového sloupce podle návrhu (1300 px při 1920 px viewportu). */
+  --column: 1300px;
+  --gutter: clamp(20px, 3.2vw, 40px);
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --bg-footer: #f4f6f8;
+    --surface: #f7f9fb;
+    --surface-hover: #eef2f6;
+    --border: #e2e8ef;
+    --border-strong: #cbd5e0;
+    --text: #0b0d10;
+    --text-muted: #58687a;
+    --text-faint: #7b8998;
+    --accent: #cf2f2f;
+    --accent-dim: #e78585;
+    --accent-bg: rgba(207, 47, 47, 0.07);
+    --focus: #1a5fd0;
+
+    color-scheme: light;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------------- layout */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--column);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+/* Hlavní blok odpovídá rámu 1920 × 928 z návrhu — obsah svisle vystředěný. */
+.stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding-block: clamp(48px, 8vh, 120px);
+}
+
+.stage-inner {
+  width: 100%;
+}
+
+/* ------------------------------------------------------------------ hero */
+
+.hero-label {
+  margin: 0;
+  font-size: clamp(22px, 2.2vw, 40px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-muted);
+}
+
+.hero-amount {
+  margin: 4px 0 0;
+  font-size: clamp(38px, 5.6vw, 76px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  /* Číslo se mění každý snímek — pevná šířka glyfů brání poskakování. */
+  white-space: nowrap;
+}
+
+.hero-amount .unit {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.hero-since {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: clamp(14px, 1.05vw, 17px);
+}
+
+.hero-since dt {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.hero-since dd {
+  margin: 0;
+  color: var(--accent);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-meta {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text-faint);
+}
+
+.hero-meta a {
+  color: var(--text-muted);
+  text-underline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------ tabs */
+
+.panel {
+  margin-top: clamp(40px, 6vh, 100px);
+}
+
+.tabs {
+  display: inline-flex;
+  gap: 10px;
+  padding: 0;
+  margin: 0 0 22px;
+  border: 0;
+}
+
+.tab {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.tab:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.tab[aria-selected='true'] {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+/* --------------------------------------------------------------- metrics */
+
+/* Čtyři sloupce po 317,5 px s mezerou 10 px, jak je v návrhu. */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.metric {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.metric-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.metric-body {
+  min-width: 0;
+}
+
+.metric-value {
+  font-size: clamp(20px, 1.55vw, 25px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  /* Částka se nesmí zalomit uprostřed; „/ rok“ smí spadnout níž. */
+  text-wrap: pretty;
+}
+
+.metric-value .amount {
+  white-space: nowrap;
+}
+
+.metric-value .per {
+  font-size: 0.6em;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.metric-label {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------- context */
+
+.context {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: transparent;
+}
+
+.chip strong {
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------- metodika */
+
+.methodology {
+  border-top: 1px solid var(--border);
+  padding-block: clamp(40px, 7vh, 80px);
+}
+
+.methodology h2 {
+  margin: 0 0 8px;
+  font-size: clamp(20px, 1.8vw, 26px);
+  letter-spacing: -0.02em;
+}
+
+.methodology .lede {
+  margin: 0 0 28px;
+  max-width: 74ch;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.method-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.method-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  background: var(--surface);
+}
+
+.method-card h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.method-card p {
+  margin: 0 0 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.method-card code,
+.formula {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  color: var(--text);
+}
+
+/* -------------------------------------------------------------- tabulka */
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  min-width: 720px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+thead th {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  background: var(--surface);
+  white-space: nowrap;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+td.num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+td .note {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-faint);
+  font-size: 12.5px;
+  line-height: 1.5;
+  max-width: 52ch;
+}
+
+/* ------------------------------------------------------------------- api */
+
+.api {
+  border-top: 1px solid var(--border);
+  padding-block: clamp(40px, 7vh, 80px);
+}
+
+.api h2 {
+  margin: 0 0 8px;
+  font-size: clamp(20px, 1.8vw, 26px);
+  letter-spacing: -0.02em;
+}
+
+.api p {
+  margin: 0 0 20px;
+  max-width: 74ch;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+pre {
+  margin: 0;
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+pre .c {
+  color: var(--text-faint);
+}
+
+/* ---------------------------------------------------------------- footer */
+
+/* Pruh 1920 × 152 z návrhu. */
+.footer {
+  background: var(--bg-footer);
+  border-top: 1px solid var(--border);
+  padding-block: 30px;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 32px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.footer-links a:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-note {
+  font-size: 12.5px;
+  color: var(--text-faint);
+  max-width: 46ch;
+  line-height: 1.55;
+}
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 1100px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-amount {
+    /* Na úzkých displejích se musí zalomit, jinak přeteče. */
+    white-space: normal;
+    letter-spacing: -0.04em;
+  }
+
+  .stage {
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
