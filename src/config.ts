@@ -26,13 +26,11 @@ export interface SiteConfig {
 export const config: SiteConfig = {
   organisation: 'Voluntia',
   tagline: 'Libertariánská strana',
-  // Do public/ patří skutečné logo (podání ruky) a sem jeho cesta.
-  logo: null,
+  logo: '/logo-voluntia.svg',
   links: {
     web: 'https://voluntia.cz/',
     x: 'https://x.com/voluntiacz',
-    // Instagramový profil se mi nepodařilo ověřit — doplňte skutečnou adresu.
-    instagram: null,
+    instagram: 'https://www.instagram.com/voluntiacz/',
   },
   contact: null,
   repository: 'https://github.com/jirkacepelka/Statni-dluh',

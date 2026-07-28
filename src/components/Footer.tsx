@@ -8,23 +8,33 @@ export function Footer() {
     { href: config.links.instagram, label: 'Instagram' },
   ].filter((link): link is { href: string; label: string } => Boolean(link.href));
 
+  // Dodané logo obsahuje i nápis, takže se textová varianta nekreslí.
+  const mark = config.logo ? (
+    <img
+      className="brand-logo"
+      src={config.logo}
+      alt={`${config.organisation}${config.tagline ? ` – ${config.tagline}` : ''}`}
+      width={200}
+      height={55}
+    />
+  ) : (
+    <>
+      <Handshake size={34} strokeWidth={2} aria-hidden="true" />
+      {config.organisation}
+      {config.tagline && <span className="brand-tag">{config.tagline}</span>}
+    </>
+  );
+
   return (
     <footer className="footer">
       <div className="container">
-        {/* Dodané logo obsahuje i nápis, takže se textová varianta nekreslí. */}
         <div className="brand">
-          {config.logo ? (
-            <img
-              src={config.logo}
-              alt={`${config.organisation}${config.tagline ? ` – ${config.tagline}` : ''}`}
-              height={44}
-            />
+          {config.links.web ? (
+            <a className="brand-link" href={config.links.web} target="_blank" rel="noopener noreferrer">
+              {mark}
+            </a>
           ) : (
-            <>
-              <Handshake size={34} strokeWidth={2} aria-hidden="true" />
-              {config.organisation}
-              {config.tagline && <span className="brand-tag">{config.tagline}</span>}
-            </>
+            mark
           )}
         </div>
 

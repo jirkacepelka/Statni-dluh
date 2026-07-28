@@ -287,8 +287,23 @@ a {
   color: var(--text-muted);
 }
 
-.brand img {
+.brand-link {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+/* Logo je bílé; klidový stav je 60 %, najetím se rozsvítí na plnou. */
+.brand-logo {
   display: block;
+  max-width: 100%;
+  height: auto;
+  opacity: 0.6;
+  transition: opacity 150ms ease;
+}
+
+.brand-link:hover .brand-logo,
+.brand-link:focus-visible .brand-logo {
+  opacity: 1;
 }
 
 .brand-tag {
