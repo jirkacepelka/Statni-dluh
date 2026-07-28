@@ -1,12 +1,13 @@
-import { Users, Receipt, TrendingUp, Landmark, type LucideIcon } from 'lucide-react';
+import { Store, Compass, Landmark, Shapes, type LucideIcon } from 'lucide-react';
 import { BASIS_LABELS, metrics, type Basis } from '../../shared/model';
 import { czk, czkRounded } from '../../shared/format';
 
+/** Lucide protějšky ikon z návrhu: stánek, kompas, budova, tvary. */
 const ICONS: Record<string, LucideIcon> = {
-  'dluh-na-osobu': Users,
-  'obsluha-na-osobu': Receipt,
-  'prirustek-na-osobu': TrendingUp,
-  'prirustek-celkem': Landmark,
+  'dluh-na-osobu': Store,
+  'obsluha-na-osobu': Compass,
+  'prirustek-na-osobu': Landmark,
+  'prirustek-celkem': Shapes,
 };
 
 const BASES: Basis[] = ['obyvatel', 'pracujici'];
@@ -49,12 +50,12 @@ export function Metrics({ basis, onBasisChange, now }: MetricsProps) {
           const Icon = ICONS[metric.id] ?? Landmark;
           // Miliardové částky se v malém boxu nedají číst po jednotkách.
           const display =
-            Math.abs(metric.value) >= 1e9 ? czkRounded(metric.value) : `${czk(metric.value)} Kč`;
+            Math.abs(metric.value) >= 1e9 ? czkRounded(metric.value) : `${czk(metric.value)} kč`;
 
           return (
             <li className="metric" key={metric.id}>
               <span className="metric-icon" aria-hidden="true">
-                <Icon size={26} strokeWidth={1.75} />
+                <Icon size={52} strokeWidth={2.6} absoluteStrokeWidth />
               </span>
               <div className="metric-body">
                 <div className="metric-value">

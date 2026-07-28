@@ -1,14 +1,15 @@
 /**
- * Konfigurace provozovatele stránky.
+ * Konfigurace provozovatele stránky — obsah patičky.
  *
- * V návrhu je v patičce logo politické strany a tři odkazy. Doplň sem
- * skutečné hodnoty — dokud jsou `null`, patička odkaz nezobrazí, aby web
- * netvrdil nic, co není pravda.
+ * Odkaz, který je `null`, se nezobrazí. Web radši neuvede nic než něco,
+ * co si nedokáže ověřit.
  */
 
 export interface SiteConfig {
   /** Jméno provozovatele v patičce. */
   organisation: string;
+  /** Podtitul vedle jména, jako štítek. */
+  tagline: string | null;
   /** Cesta k logu ve `public/`. Když je `null`, použije se textová značka. */
   logo: string | null;
   links: {
@@ -23,11 +24,14 @@ export interface SiteConfig {
 }
 
 export const config: SiteConfig = {
-  organisation: 'Doplňte název provozovatele',
+  organisation: 'Voluntia',
+  tagline: 'Libertariánská strana',
+  // Do public/ patří skutečné logo (podání ruky) a sem jeho cesta.
   logo: null,
   links: {
-    web: null,
-    x: null,
+    web: 'https://voluntia.cz/',
+    x: 'https://x.com/voluntiacz',
+    // Instagramový profil se mi nepodařilo ověřit — doplňte skutečnou adresu.
     instagram: null,
   },
   contact: null,

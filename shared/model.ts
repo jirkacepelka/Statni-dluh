@@ -97,7 +97,7 @@ export interface Metric {
 export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
   const people = basisCount(basis);
   const debt = debtAt(now).value;
-  const perPersonNoun = basis === 'obyvatel' ? 'obyvatele' : 'pracujícího';
+  const perCapita = basis === 'obyvatel' ? 'obyvatel' : 'zaměstnaných';
 
   return [
     {
@@ -106,32 +106,36 @@ export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
       unit: 'celkem',
       label:
         basis === 'obyvatel'
-          ? 'Podíl na státním dluhu, včetně důchodců a nemluvňat'
-          : 'Podíl na státním dluhu při rozpočtu jen mezi zaměstnané a podnikatele',
-      formula: `státní dluh ÷ ${basis === 'obyvatel' ? 'počet obyvatel' : 'počet zaměstnaných'}`,
+          ? 'Na obyvatele, včetně důchodců a nemluvňat'
+          : 'Na jednoho zaměstnaného nebo podnikatele',
+      formula: `státní dluh ÷ počet ${perCapita}`,
       inputs: ['debtAnchor', 'debtProjection', basis === 'obyvatel' ? 'population' : 'employed'],
     },
     {
       id: 'obsluha-na-osobu',
       value: dataset.debtServiceCurrentYear.value / people,
       unit: 'ročně',
-      label: `Tolik stojí ${perPersonNoun} samotné úroky ze státního dluhu`,
-      formula: `výdaje na obsluhu dluhu ÷ ${basis === 'obyvatel' ? 'počet obyvatel' : 'počet zaměstnaných'}`,
+      label:
+        basis === 'obyvatel'
+          ? 'Tolik stojí každého občana obsluha státního dluhu'
+          : 'Tolik stojí každého pracujícího obsluha státního dluhu',
+      formula: `výdaje na obsluhu dluhu ÷ počet ${perCapita}`,
       inputs: ['debtServiceCurrentYear', basis === 'obyvatel' ? 'population' : 'employed'],
     },
     {
       id: 'prirustek-na-osobu',
       value: annualInterestFromDeficit / people,
       unit: 'ročně',
-      label: 'O tolik navíc se platí každý další rok kvůli letošnímu schodku',
-      formula: `(schodek rozpočtu × výnos 10letého dluhopisu) ÷ ${basis === 'obyvatel' ? 'počet obyvatel' : 'počet zaměstnaných'}`,
+      label: 'O tolik budete platit víc každý rok kvůli aktuálnímu schodku',
+      formula: `(schodek rozpočtu × výnos 10letého dluhopisu) ÷ počet ${perCapita}`,
       inputs: ['budgetDeficit', 'marginalYield', basis === 'obyvatel' ? 'population' : 'employed'],
     },
     {
       id: 'prirustek-celkem',
       value: annualInterestFromDeficit,
       unit: 'ročně',
-      label: 'O tolik letošní schodek trvale zvyšuje náklady státu na úroky',
+      label:
+        'O tolik se zvýší náklady na obsluhu dluhu ročně, při zachování aktuálního schodku',
       formula: 'schodek rozpočtu × výnos 10letého dluhopisu',
       inputs: ['budgetDeficit', 'marginalYield'],
     },

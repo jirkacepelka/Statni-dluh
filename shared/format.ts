@@ -2,6 +2,12 @@
 
 const LOCALE = 'cs-CZ';
 
+/**
+ * Zápis měny. Návrh používá malé „kč“; spisovně je to „Kč“.
+ * Změna na jednom místě se propíše všude.
+ */
+const UNIT = 'kč';
+
 const integer = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 0 });
 
 /** `3 765 571 204 118` — plná koruna, bez haléřů. */
@@ -11,7 +17,7 @@ export function czk(value: number): string {
 
 /** `3 765 571 204 118 Kč` */
 export function czkWithUnit(value: number): string {
-  return `${czk(value)} Kč`;
+  return `${czk(value)} ${UNIT}`;
 }
 
 /**
@@ -32,7 +38,7 @@ export function czkRounded(value: number): string {
     return `${new Intl.NumberFormat(LOCALE, {
       minimumFractionDigits: used,
       maximumFractionDigits: used,
-    }).format(scaled)} ${unit} Kč`;
+    }).format(scaled)} ${unit} ${UNIT}`;
   };
 
   if (abs >= 1e12) return scale(1e12, 'bilionu', 2);

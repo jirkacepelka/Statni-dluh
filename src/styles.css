@@ -1,21 +1,19 @@
 /* ---------------------------------------------------------------- tokens */
 
 :root {
-  --bg: #0b0d10;
-  --bg-footer: #06080a;
-  --surface: #14181d;
-  --surface-hover: #1a1f26;
-  --border: #232a33;
-  --border-strong: #323b47;
-  --text: #f2f5f8;
-  --text-muted: #8b97a6;
-  --text-faint: #616d7c;
-  --accent: #ff5c5c;
-  --accent-dim: #b13a3a;
-  --accent-bg: rgba(255, 92, 92, 0.1);
-  --focus: #6ea8fe;
+  --bg: #111111;
+  --bg-footer: #0a0a0a;
+  --surface: #232323;
+  --surface-hover: #2e2e2e;
 
-  --radius: 10px;
+  --text: #ffffff;
+  --text-muted: #e4e4e4;
+  --text-faint: #8e8e8e;
+
+  --accent: #ffd400;
+  --accent-ink: #111111;
+  --alert: #ff3b30;
+
   --radius-sm: 6px;
 
   /* Šířka obsahového sloupce podle návrhu (1300 px při 1920 px viewportu). */
@@ -23,26 +21,6 @@
   --gutter: clamp(20px, 3.2vw, 40px);
 
   color-scheme: dark;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #ffffff;
-    --bg-footer: #f4f6f8;
-    --surface: #f7f9fb;
-    --surface-hover: #eef2f6;
-    --border: #e2e8ef;
-    --border-strong: #cbd5e0;
-    --text: #0b0d10;
-    --text-muted: #58687a;
-    --text-faint: #7b8998;
-    --accent: #cf2f2f;
-    --accent-dim: #e78585;
-    --accent-bg: rgba(207, 47, 47, 0.07);
-    --focus: #1a5fd0;
-
-    color-scheme: light;
-  }
 }
 
 * {
@@ -58,10 +36,9 @@ body {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, sans-serif;
+  font-family: Figtree, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -71,7 +48,7 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
@@ -119,107 +96,98 @@ a {
 
 .hero-label {
   margin: 0;
-  font-size: clamp(22px, 2.2vw, 40px);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--text-muted);
+  font-size: clamp(24px, 2.1vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
 }
 
 .hero-amount {
-  margin: 4px 0 0;
-  font-size: clamp(38px, 5.6vw, 76px);
-  font-weight: 700;
+  margin: 2px 0 0;
+  font-size: clamp(38px, 5.4vw, 76px);
+  font-weight: 800;
   letter-spacing: -0.035em;
-  line-height: 1.08;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
-  /* Číslo se mění každý snímek — pevná šířka glyfů brání poskakování. */
+  /* Číslo se mění každou vteřinu — pevná šířka glyfů brání poskakování. */
   white-space: nowrap;
 }
 
+/* Malé žluté „kč“ sedí na účaří velkého čísla. */
 .hero-amount .unit {
-  color: var(--text-muted);
-  font-weight: 600;
+  font-size: 0.32em;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+  margin-left: 0.18em;
 }
 
 .hero-since {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 10px;
-  margin-top: 14px;
-  font-size: clamp(14px, 1.05vw, 17px);
+  gap: 8px;
+  margin: 10px 0 0;
+  font-size: clamp(14px, 1.05vw, 18px);
+  font-weight: 700;
 }
 
-.hero-since dt {
+.hero-since dt,
+.hero-since dd {
   margin: 0;
-  color: var(--text-muted);
 }
 
 .hero-since dd {
-  margin: 0;
-  color: var(--accent);
-  font-weight: 600;
+  color: var(--alert);
   font-variant-numeric: tabular-nums;
-}
-
-.hero-meta {
-  margin-top: 10px;
-  font-size: 13px;
-  color: var(--text-faint);
-}
-
-.hero-meta a {
-  color: var(--text-muted);
-  text-underline-offset: 3px;
 }
 
 /* ------------------------------------------------------------------ tabs */
 
 .panel {
-  margin-top: clamp(40px, 6vh, 100px);
+  margin-top: clamp(40px, 7vh, 108px);
 }
 
 .tabs {
   display: inline-flex;
-  gap: 10px;
+  gap: 8px;
   padding: 0;
-  margin: 0 0 22px;
+  margin: 0 0 24px;
   border: 0;
 }
 
 .tab {
   appearance: none;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-muted);
+  border: 0;
+  background: var(--surface);
+  color: var(--text);
   font: inherit;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 700;
   padding: 10px 16px;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+  transition: background-color 120ms ease, color 120ms ease;
 }
 
 .tab:hover {
   background: var(--surface-hover);
-  color: var(--text);
 }
 
 .tab[aria-selected='true'] {
-  background: var(--surface);
-  border-color: var(--border-strong);
-  color: var(--text);
+  background: var(--accent);
+  color: var(--accent-ink);
 }
 
 /* --------------------------------------------------------------- metrics */
 
-/* Čtyři sloupce po 317,5 px s mezerou 10 px, jak je v návrhu. */
+/* Čtyři sloupce po 317,5 px s mezerou 10 px, jak je v návrhu.
+   Bez podkladu a bez rámečku — ikona a text stojí přímo na pozadí. */
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  gap: 10px 12px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -228,22 +196,13 @@ a {
 .metric {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
+  gap: 14px;
 }
 
 .metric-icon {
   flex: none;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius);
-  background: var(--accent-bg);
   color: var(--accent);
+  margin-top: 2px;
 }
 
 .metric-body {
@@ -251,12 +210,11 @@ a {
 }
 
 .metric-value {
-  font-size: clamp(20px, 1.55vw, 25px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: clamp(20px, 1.6vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
   font-variant-numeric: tabular-nums;
-  line-height: 1.2;
-  /* Částka se nesmí zalomit uprostřed; „/ rok“ smí spadnout níž. */
+  line-height: 1.15;
   text-wrap: pretty;
 }
 
@@ -265,24 +223,24 @@ a {
 }
 
 .metric-value .per {
-  font-size: 0.6em;
-  font-weight: 500;
-  color: var(--text-muted);
+  font-size: 0.62em;
+  font-weight: 700;
+  color: var(--text-faint);
   letter-spacing: 0;
   white-space: nowrap;
 }
 
 .metric-label {
-  margin: 6px 0 0;
-  font-size: 13.5px;
-  line-height: 1.45;
+  margin: 5px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
   color: var(--text-muted);
 }
 
 /* --------------------------------------------------------------- context */
 
 .context {
-  margin-top: 28px;
+  margin-top: 34px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px 10px;
@@ -292,17 +250,21 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 7px 12px;
-  border: 1px solid var(--border);
+  padding: 7px 13px;
   border-radius: 999px;
+  background: var(--surface);
   font-size: 13px;
-  color: var(--text-muted);
-  background: transparent;
+  font-weight: 500;
+  color: #b0b0b0;
+}
+
+.chip svg {
+  color: var(--accent);
 }
 
 .chip strong {
   color: var(--text);
-  font-weight: 600;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
@@ -311,43 +273,42 @@ a {
 /* Pruh 1920 × 152 z návrhu. */
 .footer {
   background: var(--bg-footer);
-  border-top: 1px solid var(--border);
   padding-block: 30px;
-}
-
-.footer-inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px 32px;
-  align-items: flex-end;
-  justify-content: space-between;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-weight: 700;
-  font-size: 19px;
-  letter-spacing: -0.02em;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -0.03em;
+  color: var(--text-muted);
 }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: var(--accent-bg);
-  color: var(--accent);
+.brand img {
+  display: block;
+}
+
+.brand-tag {
+  align-self: flex-end;
+  margin-bottom: 7px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 .footer-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 20px;
-  margin-top: 14px;
+  gap: 8px 20px;
+  margin-top: 18px;
   font-size: 14px;
+  font-weight: 500;
 }
 
 .footer-links a {
@@ -355,7 +316,7 @@ a {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
 }
 
 .footer-links a:hover {
@@ -364,18 +325,19 @@ a {
   text-underline-offset: 3px;
 }
 
-
 /* ------------------------------------------------------------ responsive */
 
 @media (max-width: 1100px) {
   .metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 16px;
   }
 }
 
 @media (max-width: 620px) {
   .metrics {
     grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
   }
 
   .hero-amount {
