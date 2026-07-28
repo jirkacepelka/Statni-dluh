@@ -12,6 +12,11 @@ Vercel. Bez databáze, bez backendu kromě jedné serverless funkce.
 
 ## Co stránka tvrdí a proč
 
+> Metodika i dokumentace API jsou záměrně tady, ne na stránce. Stránka má být
+> jedna obrazovka s číslem; kdo chce vědět, odkud se bere, klikne na
+> „Metodika a zdroje“ v patičce a přijde sem.
+
+
 Státní dluh se neměří v reálném čase. Ministerstvo financí ho publikuje
 čtvrtletně. Žádné počítadlo — ani toto — proto neví, kolik stát dluží právě
 teď.

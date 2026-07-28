@@ -31,5 +31,5 @@ export const config: SiteConfig = {
     instagram: null,
   },
   contact: null,
-  repository: 'https://github.com',
+  repository: 'https://github.com/jirkacepelka/Statni-dluh',
 };

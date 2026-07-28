@@ -10,15 +10,15 @@ export interface LiveDebt {
   beyondProjection: boolean;
 }
 
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/**
+ * Jak často se hodnota obnovuje. Vteřinový krok je záměrný — dluh roste
+ * o 16 619 Kč/s, takže při 60 FPS by se poslední číslice slily v šum.
+ */
+const TICK_MS = 1000;
 
 /**
- * Přepočítává dluh v každém snímku. Nic se nikam nedotazuje — model je
+ * Přepočítává dluh jednou za vteřinu. Nic se nikam nedotazuje — model je
  * deterministický, takže stačí znát čas.
- *
- * Při `prefers-reduced-motion` se hodnota obnovuje jednou za sekundu.
  */
 export function useLiveDebt(): LiveDebt {
   const openedAtRef = useRef(Date.now());
@@ -28,26 +28,25 @@ export function useLiveDebt(): LiveDebt {
   });
 
   useEffect(() => {
-    const openedAt = openedAtRef.current;
-    const baseline = debtAt(openedAt).value;
+    const baseline = debtAt(openedAtRef.current).value;
 
     const tick = () => {
       const { value, beyondProjection } = debtAt();
       setState({ value, sinceOpen: value - baseline, beyondProjection });
     };
 
-    if (prefersReducedMotion()) {
-      const id = window.setInterval(tick, 1000);
-      return () => window.clearInterval(id);
-    }
-
-    let frame = 0;
-    const loop = () => {
+    // První krok se srovná na celou vteřinu, aby počítadlo tikalo
+    // pravidelně i po zpožděném načtení stránky.
+    let interval: number | undefined;
+    const align = window.setTimeout(() => {
       tick();
-      frame = window.requestAnimationFrame(loop);
+      interval = window.setInterval(tick, TICK_MS);
+    }, TICK_MS - (Date.now() % TICK_MS));
+
+    return () => {
+      window.clearTimeout(align);
+      if (interval !== undefined) window.clearInterval(interval);
     };
-    frame = window.requestAnimationFrame(loop);
-    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   return state;
