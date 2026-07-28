@@ -1,13 +1,16 @@
-import { Store, Compass, Landmark, Shapes, type LucideIcon } from 'lucide-react';
+import { Users, Percent, TrendingUp, Landmark, type LucideIcon } from 'lucide-react';
 import { BASIS_LABELS, metrics, type Basis } from '../../shared/model';
 import { czk, czkRounded } from '../../shared/format';
 
-/** Lucide protějšky ikon z návrhu: stánek, kompas, budova, tvary. */
+/**
+ * Ikony podle významu metriky, ne podle placeholderů v návrhu:
+ * lidé, kterým dluh patří → úrok → růst → stát, který ho platí.
+ */
 const ICONS: Record<string, LucideIcon> = {
-  'dluh-na-osobu': Store,
-  'obsluha-na-osobu': Compass,
-  'prirustek-na-osobu': Landmark,
-  'prirustek-celkem': Shapes,
+  'dluh-na-osobu': Users,
+  'obsluha-na-osobu': Percent,
+  'prirustek-na-osobu': TrendingUp,
+  'prirustek-celkem': Landmark,
 };
 
 const BASES: Basis[] = ['obyvatel', 'pracujici'];
@@ -55,7 +58,7 @@ export function Metrics({ basis, onBasisChange, now }: MetricsProps) {
           return (
             <li className="metric" key={metric.id}>
               <span className="metric-icon" aria-hidden="true">
-                <Icon size={52} strokeWidth={2.6} absoluteStrokeWidth />
+                <Icon size={48} strokeWidth={2.8} absoluteStrokeWidth />
               </span>
               <div className="metric-body">
                 <div className="metric-value">
