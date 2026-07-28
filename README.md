@@ -21,19 +21,39 @@ Státní dluh se neměří v reálném čase. Ministerstvo financí ho publikuje
 čtvrtletně. Žádné počítadlo — ani toto — proto neví, kolik stát dluží právě
 teď.
 
-Číslo v hlavičce je **lineární interpolace mezi dvěma oficiálně publikovanými
-body**:
+Číslo v hlavičce vychází z **poslední oficiálně publikované hodnoty** a roste
+**průměrným ročním tempem** podle plánu MF:
 
 | | hodnota | zdroj |
 | --- | --- | --- |
 | kotva | 3 726,8 mld. Kč k 30. 6. 2026 | MF ČR, Čtvrtletní zpráva o řízení státního dluhu, 1. pololetí 2026 |
-| cíl | 3 991,0 mld. Kč k 31. 12. 2026 | MF ČR, Strategie financování a řízení státního dluhu na rok 2026 |
+| konec loňska | 3 677,6 mld. Kč k 31. 12. 2025 | tamtéž |
+| plán na konec roku | 3 991,0 mld. Kč k 31. 12. 2026 | MF ČR, Strategie financování a řízení státního dluhu na rok 2026 |
 
-Z toho vychází **16 619 Kč/s**, tedy 1,44 mld. Kč denně. Skutečný přírůstek je
-nerovnoměrný — dluh roste skokově podle emisního kalendáře. Stránka to
-neschovává, je to napsané pod počítadlem i v sekci Metodika.
+```
+(3 991,0 − 3 677,6) mld. Kč ÷ 365 dní = 9 937,85 Kč/s = 859 mil. Kč denně
+```
 
-Interpolace na konci roku dosedne přesně na projekci MF; ověřeno v testu níže.
+### Proč roční průměr, a ne tempo zbytku roku
+
+Plán MF je silně zadní. Kdyby se tempo dopočítalo jen ze zbývající části roku,
+vyšlo by takto:
+
+| období | přírůstek | tempo |
+| --- | --- | --- |
+| 1. pololetí 2026 — skutečnost | +49,2 mld. Kč | 3 146 Kč/s |
+| 2. pololetí 2026 — plán | +264,2 mld. Kč | 16 619 Kč/s |
+| celý rok 2026 — průměr | +313,4 mld. Kč | **9 938 Kč/s** |
+
+Tempo zbytku roku je **5,3× rychlejší** než to, co se skutečně dělo v prvním
+pololetí. Roční průměr je klidnější a bližší realitě.
+
+Cenou je, že počítadlo **na projekci MF ke konci roku nedosedne** — skončí
+zhruba 106 mld. Kč pod ní. Je to vědomá volba, ne chyba; API tento rozdíl
+vystavuje v poli `dluh.rozdilProtiProjekci`, aby se nedal přehlédnout.
+
+Skutečný přírůstek je tak jako tak nerovnoměrný — dluh roste skokově podle
+emisního kalendáře, ne plynule.
 
 ### Co se záměrně nepočítá
 

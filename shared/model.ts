@@ -3,9 +3,9 @@
  * frontendem a serverless API, aby web a `/api/dluh` nikdy neukázaly
  * jiné číslo.
  *
- * Základní pravidlo: nic se nevymýšlí. Počítadlo je lineární interpolace
- * mezi dvěma oficiálně publikovanými body — poslední známou hodnotou dluhu
- * a projekcí Ministerstva financí ke konci roku.
+ * Základní pravidlo: nic se nevymýšlí. Počítadlo vychází z poslední
+ * oficiálně publikované hodnoty dluhu a roste průměrným ročním tempem,
+ * které plyne z plánu Ministerstva financí na celý letošní rok.
  */
 
 import { dataset } from './dataset';
@@ -27,18 +27,38 @@ function endOfDay(isoDate: string): number {
 
 const ANCHOR_MS = endOfDay(dataset.debtAnchor.asOf);
 const TARGET_MS = endOfDay(dataset.debtProjection.asOf);
+const YEAR_START_MS = endOfDay(dataset.debtPreviousYearEnd.asOf);
 
 /**
- * O kolik korun dluh roste za sekundu.
+ * O kolik korun dluh roste za sekundu — průměr za celý letošní rok.
  *
- * (projekce MF ke konci roku − poslední známý stav) / počet sekund mezi nimi
+ * (projekce MF ke konci roku − stav na konci loňského roku) / délka roku
+ *
+ * Záměrně se nepočítá jen ze zbytku roku. Plán MF je silně zadní —
+ * v 1. pololetí dluh skutečně vzrostl o 49,2 mld. Kč, zatímco na
+ * 2. pololetí zbývá 264,2 mld. Tempo dopočtené jen ze zbytku roku by
+ * vyšlo přes 16 600 Kč/s, tedy pětinásobek toho, co se dělo doopravdy.
+ * Roční průměr je klidnější a bližší realitě.
+ *
+ * Cenou je, že počítadlo na projekci MF ke konci roku nedosedne —
+ * skončí pod ní. Viz `shortfallAgainstProjection`.
  */
 export const growthPerSecond =
-  (dataset.debtProjection.value - dataset.debtAnchor.value) /
-  ((TARGET_MS - ANCHOR_MS) / MS_PER_SECOND);
+  (dataset.debtProjection.value - dataset.debtPreviousYearEnd.value) /
+  ((TARGET_MS - YEAR_START_MS) / MS_PER_SECOND);
 
 /** Denní přírůstek — čitelnější než sekundový. */
 export const growthPerDay = growthPerSecond * 86_400;
+
+/**
+ * O kolik bude odhad ke konci roku nižší než projekce MF.
+ *
+ * Přímý důsledek volby ročního průměru místo tempa zbytku roku.
+ * Vystavuje se v API, aby to nebylo nutné dopočítávat zvenčí.
+ */
+export const shortfallAgainstProjection =
+  dataset.debtProjection.value -
+  (dataset.debtAnchor.value + ((TARGET_MS - ANCHOR_MS) / MS_PER_SECOND) * growthPerSecond);
 
 /**
  * Odhad státního dluhu v daném okamžiku.
@@ -155,6 +175,7 @@ export function snapshot(basis: Basis, now: number = Date.now()) {
       posledniZnamaHodnota: dataset.debtAnchor.value,
       posledniZnamaKDatu: dataset.debtAnchor.asOf,
       projekceKonecRoku: dataset.debtProjection.value,
+      rozdilProtiProjekci: shortfallAgainstProjection,
       podilNaHdp: dataset.debtToGdp.value,
       zaProjekci: debt.beyondProjection,
     },
@@ -168,7 +189,7 @@ export function snapshot(basis: Basis, now: number = Date.now()) {
       pocetPracujicich: dataset.employed.value,
     },
     metodika:
-      'Dluh se neměří v reálném čase. Zobrazená hodnota je lineární interpolace mezi posledním publikovaným stavem státního dluhu a projekcí MF ke konci roku. Skutečný přírůstek je nerovnoměrný — závisí na emisním kalendáři.',
+      'Dluh se neměří v reálném čase. Zobrazená hodnota vychází z posledního publikovaného stavu státního dluhu a roste průměrným ročním tempem podle plánu MF na celý rok. Skutečný přírůstek je nerovnoměrný — závisí na emisním kalendáři. Protože je plán MF zadní, odhad ke konci roku zůstane pod projekcí; rozdíl je v poli "dluh.rozdilProtiProjekci".',
     zdroje: Object.entries(dataset)
       .filter(([, v]) => typeof v === 'object' && v !== null && 'url' in v)
       .map(([key, v]) => {
