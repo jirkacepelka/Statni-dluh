@@ -185,13 +185,39 @@ může objevit i ve vyhledávání datasetů.
 
 ### Náhledový obrázek
 
-`public/og.png` (1200 × 630) je vygenerovaný ze šablony
-[`scripts/og-template.html`](scripts/og-template.html). Není součástí buildu —
-obrázek je zakomitovaný. Pro překreslení zkopírujte šablonu do `public/`,
-spusťte `npm run dev` a udělejte screenshot v 1200 × 630.
+`og:image` míří na [`api/og.tsx`](api/og.tsx) — edge funkci, která obrázek
+vykreslí až při požadavku, takže nese aktuální číslo. Počítá stejným modelem
+jako web i `/api/dluh`.
 
-Ukazuje poslední **publikovanou** hodnotu i s datem, ne dopočet. Statický
-obrázek by jinak časem tvrdil něco, co neplatí.
+**Provoz to nezatíží.** `og:image` nestahují návštěvníci; volají ho jen
+crawleři sociálních sítí při prvním scrapu odkazu. S hodinovou edge cache se
+funkce spustí nejvýš 24× denně bez ohledu na počet sdílení. Render trvá kolem
+300 ms.
+
+**Čekat od toho živý náhled ale nejde.** Facebook i LinkedIn si obrázek k dané
+URL zapamatují prakticky natrvalo, X na dlouho. Čerstvé číslo tedy uvidí jen
+první scrape každé URL — kdo sdílí odkaz jako druhý, dostane obrázek z prvního
+scrapu. Průběžně se to měnit nebude.
+
+`public/og.png` je statická záloha ze šablony
+[`scripts/og-template.html`](scripts/og-template.html), kdyby funkce
+selhala. Na rozdíl od dynamické verze ukazuje poslední **publikovanou**
+hodnotu s datem, aby nezestárla do nepravdy.
+
+#### Fonty pro obrázek
+
+Satori neumí WOFF2 a edge runtime nemá souborový systém, takže je font
+v [`api/_fonts.ts`](api/_fonts.ts) zapečený jako base64 TTF. Regenerace:
+
+```bash
+# starý User-Agent přiměje Google Fonts vrátit TTF místo WOFF2
+curl -A "Mozilla/4.0" "https://fonts.googleapis.com/css2?family=Inter:wght@600;800"
+# stáhnout .ttf z výstupu, pak subsetovat a zakódovat do base64
+```
+
+Sada znaků je stejná jako u webového fontu — ASCII plus česká diakritika.
+Odvozovat ji z konkrétních řetězců v šabloně je past: stačí změnit text a
+chybějící glyf se vykreslí náhradním fontem.
 
 ### Font
 

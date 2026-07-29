@@ -85,7 +85,9 @@ function structuredData(): string {
 /** Značky, které se vkládají do <head> až při buildu. */
 export function head(): string {
   const url = `${config.siteUrl}/`;
-  const image = `${config.siteUrl}/og.png`;
+  // Generuje se při požadavku, takže náhled nese aktuální číslo.
+  // Statický /og.png zůstává v repozitáři jako záloha.
+  const image = `${config.siteUrl}/api/og`;
 
   return [
     `<link rel="canonical" href="${url}" />`,
