@@ -51,6 +51,18 @@ export const growthPerSecond =
 /** Denní přírůstek — čitelnější než sekundový. */
 export const growthPerDay = growthPerSecond * 86_400;
 
+/** O kolik má dluh za celý letošní rok vzrůst podle plánu MF. */
+export const plannedYearIncrease =
+  dataset.debtProjection.value - dataset.debtPreviousYearEnd.value;
+
+/**
+ * Tempo dopočtené jen ze zbytku roku — hodnota, kterou počítadlo záměrně
+ * nepoužívá. Slouží k doložení, o kolik je plán MF zadní.
+ */
+export const growthPerSecondRestOfYear =
+  (dataset.debtProjection.value - dataset.debtAnchor.value) /
+  ((TARGET_MS - ANCHOR_MS) / MS_PER_SECOND);
+
 /**
  * O kolik bude odhad ke konci roku nižší než projekce MF.
  *

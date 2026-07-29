@@ -25,5 +25,13 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      // Dvě samostatné stránky. Informační nemá vlastní aplikační kód,
+      // její vstup jen připojí styly — obsah se vykresluje při buildu.
+      input: {
+        index: 'index.html',
+        informace: 'informace.html',
+      },
+    },
   },
 });

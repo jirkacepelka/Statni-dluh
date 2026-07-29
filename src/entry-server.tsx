@@ -8,6 +8,7 @@
 
 import { renderToString } from 'react-dom/server';
 import { App } from './App';
+import { Informace } from './pages/Informace';
 import { config } from './config';
 import { dataset } from '../shared/dataset';
 import { growthPerDay } from '../shared/model';
@@ -15,6 +16,11 @@ import { czk } from '../shared/format';
 
 export function render(): string {
   return renderToString(<App />);
+}
+
+/** Informační stránka. Vykresluje se jen při buildu, klient ji nehydratuje. */
+export function renderInfo(): string {
+  return renderToString(<Informace />);
 }
 
 export { config };
@@ -104,20 +110,36 @@ export function head(): string {
 
 export const meta = { title: TITLE, description: DESCRIPTION };
 
+/** Značky pro informační stránku. Bez og:image — sdílí se počítadlo, ne text. */
+export function headInfo(): string {
+  const url = `${config.siteUrl}/informace`;
+  return [
+    `<link rel="canonical" href="${url}" />`,
+    `<meta property="og:url" content="${url}" />`,
+    `<meta property="og:site_name" content="${config.organisation}" />`,
+    `<meta property="og:image" content="${config.siteUrl}/api/og" />`,
+    `<meta name="twitter:image" content="${config.siteUrl}/api/og" />`,
+  ].join('\n    ');
+}
+
 /** robots.txt — generuje se, aby adresa nebyla zapsaná na dvou místech. */
 export function robots(): string {
   return ['User-agent: *', 'Allow: /', '', `Sitemap: ${config.siteUrl}/sitemap.xml`, ''].join('\n');
 }
 
 export function sitemap(): string {
+  const page = (path: string, priority: string, changefreq: string) =>
+    `  <url>
+    <loc>${config.siteUrl}${path}</loc>
+    <lastmod>${dataset.checkedAt}</lastmod>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>`;
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${config.siteUrl}/</loc>
-    <lastmod>${dataset.checkedAt}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
+${page('/', '1.0', 'daily')}
+${page('/informace', '0.5', 'monthly')}
 </urlset>
 `;
 }

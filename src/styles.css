@@ -408,6 +408,191 @@ a {
   text-underline-offset: 3px;
 }
 
+/* ---------------------------------------------------- informační stránka */
+
+.doc {
+  flex: 1;
+  padding-block: clamp(40px, 7vh, 80px) clamp(60px, 10vh, 120px);
+  /* Text se čte, nepřebíhá — užší sloupec než u počítadla. */
+  --column: 820px;
+}
+
+.doc-back {
+  margin-bottom: 34px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.doc-back a {
+  color: var(--text-faint);
+  text-decoration: none;
+}
+
+.doc-back a:hover {
+  color: var(--accent);
+}
+
+.doc-back-bottom {
+  margin: 56px 0 0;
+}
+
+.doc h1 {
+  margin: 0 0 10px;
+  font-size: clamp(30px, 3.4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.doc-lede {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+.doc h2 {
+  margin: 56px 0 14px;
+  padding-top: 26px;
+  border-top: 1px solid #262626;
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.doc h3 {
+  margin: 32px 0 8px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+
+.doc p {
+  margin: 0 0 14px;
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--text-muted);
+}
+
+.doc strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.doc a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.doc a:hover {
+  color: var(--accent);
+}
+
+.doc ul {
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+
+.doc li {
+  margin-bottom: 9px;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.doc li::marker {
+  color: var(--accent);
+}
+
+.doc code {
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  color: var(--text);
+}
+
+/* Zvýrazněné sdělení — to podstatné, co si má čtenář odnést. */
+.doc-callout {
+  margin: 0 0 20px;
+  padding: 16px 18px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--surface);
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.doc-formula {
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------- tabulka se zdroji */
+
+.doc-table {
+  margin: 18px 0;
+  overflow-x: auto;
+  border: 1px solid #262626;
+  border-radius: var(--radius-sm);
+}
+
+.doc-table table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.doc-table th,
+.doc-table td {
+  padding: 11px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #262626;
+  color: var(--text-muted);
+}
+
+.doc-table thead th {
+  background: var(--surface);
+  color: var(--text-faint);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.doc-table tbody th {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.doc-table tbody tr:last-child th,
+.doc-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.doc-table .num {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.doc-table .note {
+  display: block;
+  margin-top: 5px;
+  max-width: 46ch;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+
 /* ------------------------------------------------------------ responsive */
 
 @media (max-width: 1100px) {

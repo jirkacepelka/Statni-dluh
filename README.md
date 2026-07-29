@@ -152,9 +152,26 @@ npm run typecheck
 
 ---
 
+## Stránky
+
+| adresa | soubor | JavaScript |
+| --- | --- | --- |
+| `/` | `index.html` | React, hydratuje předvykreslené HTML |
+| `/informace` | `informace.html` | žádný — jen připojení stylů |
+
+Informační stránka nese právní upozornění, metodiku a zásady soukromí. Obsah
+je celý v [`src/pages/Informace.tsx`](src/pages/Informace.tsx) a vykresluje se
+jen při buildu, takže na klientu neběží ani řádek aplikačního kódu. Čísla i
+tabulku zdrojů bere ze stejného datasetu jako počítadlo — nemůže se s ním
+rozejít.
+
+Adresy bez přípony zajišťuje `cleanUrls` ve `vercel.json`.
+
+---
+
 ## SEO a build
 
-Build má čtyři kroky, protože stránka se **předvykresluje do statického
+Build má čtyři kroky, protože obě stránky se **předvykreslují do statického
 HTML**. Bez toho by crawler dostal jen prázdný `<div id="root">` — a
 crawleři sociálních sítí, kteří JavaScript nespouštějí vůbec, by neukázali
 nic. Model je deterministický, takže se dá celý strom vyrenderovat dopředu;

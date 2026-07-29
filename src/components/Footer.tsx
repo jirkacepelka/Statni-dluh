@@ -45,6 +45,7 @@ export function Footer() {
               <ArrowUpRight size={13} aria-hidden="true" />
             </a>
           ))}
+          <a href="/informace">Informace a metodika</a>
         </nav>
       </div>
     </footer>
