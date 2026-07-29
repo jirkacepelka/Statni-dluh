@@ -63,13 +63,36 @@ emisního kalendáře, ne plynule.
 
 ### Odkud se bere „o tolik navíc každý rok“
 
-Letošní schodek (310 mld. Kč) × výnos 10letého státního dluhopisu (4,60 %)
-= **14,3 mld. Kč ročně**. To je trvalý úrokový náklad, který letošní schodek
-přidává.
+Letošní schodek (310 mld. Kč) × průměrný výnos nově emitovaných státních
+dluhopisů (4,60 %) = **14,3 mld. Kč ročně**. To je trvalý úrokový náklad,
+který letošní schodek přidává.
 
-Kontrolní bod: rozpočtované výdaje na obsluhu dluhu vzrostly meziročně
-z 98,1 na 110,0 mld. Kč, tedy o 11,9 mld. Odhad sedí v řádu i proti
-skutečnosti.
+#### Proč zrovna výnos nových emisí
+
+Protože jde o **marginální**, ne průměrnou cenu peněz. Existující dluh stojí
+stát 2,95 % ročně (110 mld. ÷ 3 727 mld.), jenže ten průměr obsahuje emise
+z let 2016–2021, kdy si stát půjčoval skoro zadarmo. Nových 310 miliard se
+prodá za dnešní ceny, ne za ceny z roku 2018 — použít průměr celého portfolia
+by náklad podhodnotilo zhruba o třetinu.
+
+Použitá hodnota není odhad podle benchmarku, ale skutečný průměrný výnos
+státních dluhopisů s pevným kuponem prodaných v 1. pololetí 2026 podle MF.
+Průměrná splatnost těch emisí byla 10,0 let.
+
+Státní dluh totiž není jedna půjčka s jednou sazbou — je to několik set emisí
+a každá má kupon zafixovaný v okamžiku prodeje. Dluhopis vydaný v roce 2020
+platí své 1 % až do splatnosti bez ohledu na dnešní sazby.
+
+#### Kontrolní bod
+
+Rozpočtované výdaje na obsluhu dluhu vzrostly meziročně z 98,1 na 110,0 mld.
+Kč, tedy o 11,9 mld. **Není to totéž číslo** jako 14,3 mld. výše: meziroční
+nárůst odráží loňský schodek a refinancování starého levnějšího dluhu, které
+letos dospělo, zatímco 14,3 mld. je ustálený náklad letošního schodku, až bude
+celý vydaný. Slouží to jako kontrola řádu, ne jako shoda.
+
+Mimochodem právě to refinancování je důvod, proč úroky rostou rychleji než
+dluh sám: letos dluh poroste o 8,5 %, ale výdaje na jeho obsluhu o 12 %.
 
 ---
 

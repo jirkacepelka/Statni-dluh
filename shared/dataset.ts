@@ -102,15 +102,20 @@ export const dataset = {
   } satisfies Sourced<number>,
 
   /**
-   * Výnos 10letého státního dluhopisu — cena, za kterou si stát dnes
-   * půjčuje. Používá se k přepočtu letošního schodku na trvalý úrokový náklad.
+   * Průměrný výnos nově emitovaných státních dluhopisů — cena, za kterou si
+   * stát dnes skutečně půjčuje. Používá se k přepočtu letošního schodku na
+   * trvalý úrokový náklad.
+   *
+   * Záměrně nejde o průměrnou cenu existujícího dluhu (110 mld. ÷ 3 727 mld.
+   * = 2,95 %). Ta je nižší, protože obsahuje emise z let nulových sazeb.
+   * Nový dluh se ale prodává za dnešní ceny, ne za ceny z roku 2018.
    */
   marginalYield: {
     value: 0.046,
     asOf: '2026-06-30',
-    source: 'ČNB – výnos státního dluhopisu 10R',
-    url: 'https://www.kurzy.cz/cnb/ekonomika/vynos-dluhopisu-10r-cr/',
-    note: 'Konzervativní odhad marginálních nákladů. MF emituje napříč křivkou, průměrný výnos nových emisí bývá o něco nižší.',
+    source: 'MF ČR – Čtvrtletní zpráva o řízení státního dluhu ČR, 1. pololetí 2026',
+    url: 'https://mf.gov.cz/cs/rozpoctova-politika/rizeni-statniho-dluhu/publikace/dluhove-portfolio-ctvrtletni-informace/2026/ctvrtletni-zprava-o-rizeni-statniho-dluhu-ceske-re-64593',
+    note: 'Průměrný výnos státních dluhopisů s pevným kuponem prodaných v 1. pololetí 2026. Průměrná splatnost prodaných emisí byla 10,0 let.',
   } satisfies Sourced<number>,
 
   /** Počet obyvatel ČR. */

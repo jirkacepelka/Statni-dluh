@@ -89,9 +89,16 @@ export function basisCount(basis: Basis): number {
 /**
  * Trvalý roční úrokový náklad, který vzniká letošním schodkem.
  *
- * schodek × výnos, za který si stát dnes půjčuje. Kontrolní bod: skutečný
- * meziroční nárůst rozpočtovaných výdajů na obsluhu dluhu je
- * 110,0 − 98,1 = 11,9 mld. Kč, tedy stejný řád.
+ * schodek × průměrný výnos nových emisí, tedy cena, za kterou si stát
+ * půjčuje dnes. Ne průměrná cena existujícího dluhu (2,95 %) — ta je nižší,
+ * protože obsahuje emise z let nulových sazeb, jenže nový dluh se prodává
+ * za dnešní ceny.
+ *
+ * Kontrola řádu: rozpočtované výdaje na úroky vzrostly meziročně o
+ * 11,9 mld. Kč. Není to totéž číslo — meziroční nárůst odráží loňský
+ * schodek a refinancování starého levnějšího dluhu, zatímco tady jde o
+ * ustálený náklad letošního schodku, až bude celý vydaný. Slouží to jako
+ * kontrola řádu, ne jako shoda.
  */
 export const annualInterestFromDeficit =
   dataset.budgetDeficit.value * dataset.marginalYield.value;
@@ -156,7 +163,7 @@ export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
       value: annualInterestFromDeficit / people,
       unit: 'ročně',
       label: 'O tolik budete platit víc každý rok kvůli aktuálnímu schodku',
-      formula: `(Schodek rozpočtu × výnos 10letého státního dluhopisu) ÷ ${perCapita}`,
+      formula: `(Schodek rozpočtu × průměrný výnos nově emitovaných státních dluhopisů) ÷ ${perCapita}`,
       substitution: `(${czkRounded(deficit)} × ${percent(yieldRate, 2)}) ÷ ${czk(people)}`,
       inputs: ['budgetDeficit', 'marginalYield', peopleKey],
     },
@@ -166,7 +173,7 @@ export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
       unit: 'ročně',
       label:
         'O tolik se zvýší náklady na obsluhu dluhu ročně, při zachování aktuálního schodku',
-      formula: 'Schodek rozpočtu × výnos 10letého státního dluhopisu',
+      formula: 'Schodek rozpočtu × průměrný výnos nově emitovaných státních dluhopisů',
       substitution: `${czkRounded(deficit)} × ${percent(yieldRate, 2)}`,
       inputs: ['budgetDeficit', 'marginalYield'],
     },
