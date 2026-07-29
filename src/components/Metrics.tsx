@@ -63,7 +63,9 @@ export function Metrics({ basis, onBasisChange, now }: MetricsProps) {
               </span>
               <div className="metric-body">
                 <div className="metric-value">
-                  <span className="amount">{display}</span>
+                  <span className="amount" suppressHydrationWarning>
+                    {display}
+                  </span>
                   {metric.unit === 'ročně' && <span className="per"> / rok</span>}
                   <Explain formula={metric.formula} substitution={metric.substitution} />
                 </div>

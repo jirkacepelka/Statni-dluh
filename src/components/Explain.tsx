@@ -38,7 +38,9 @@ export function Explain({ formula, substitution }: ExplainProps) {
 
       <span role="tooltip" id={id} className="explain-bubble" hidden={!open}>
         <span className="explain-formula">{formula}</span>
-        <span className="explain-substitution">{substitution}</span>
+        <span className="explain-substitution" suppressHydrationWarning>
+          {substitution}
+        </span>
       </span>
     </span>
   );

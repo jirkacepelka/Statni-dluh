@@ -146,9 +146,74 @@ obojí tedy vrací totéž.
 ```bash
 npm install
 npm run dev        # web i /api/dluh na http://localhost:5173
-npm run build      # tsc --noEmit && vite build
+npm run build      # typecheck → vite build → SSR bundle → prerender
 npm run typecheck
 ```
+
+---
+
+## SEO a build
+
+Build má čtyři kroky, protože stránka se **předvykresluje do statického
+HTML**. Bez toho by crawler dostal jen prázdný `<div id="root">` — a
+crawleři sociálních sítí, kteří JavaScript nespouštějí vůbec, by neukázali
+nic. Model je deterministický, takže se dá celý strom vyrenderovat dopředu;
+na Vercelu tím pádem pořád běží čistě statický web, žádné SSR za běhu.
+
+| krok | co dělá |
+| --- | --- |
+| `tsc --noEmit` | typová kontrola |
+| `vite build` | klientský bundle do `dist/` |
+| `vite build --ssr` | serverový bundle do `dist-ssr/` (meziprodukt) |
+| `scripts/prerender.mjs` | vykreslí HTML, doplní značky, vygeneruje robots a sitemap, smaže `dist-ssr/` |
+
+Klient pak HTML jen hydratuje. Hodnoty závislé na čase (částka, přepočet na
+osobu) mají `suppressHydrationWarning` — v HTML je stav z okamžiku buildu a
+klient ho při prvním tiku přepíše.
+
+### Adresa webu
+
+`config.siteUrl` v [`src/config.ts`](src/config.ts) je jediné místo, kde je
+adresa zapsaná. Odvozuje se z ní canonical, `og:url`, `og:image`,
+`sitemap.xml` i `robots.txt`. Při změně domény stačí přepsat tenhle řádek.
+
+### Strukturovaná data
+
+V hlavičce je JSON-LD s `WebSite`, `Organization` a `Dataset`. Ten poslední
+popisuje data včetně odkazu na `/api/dluh` jako `DataDownload`, takže se web
+může objevit i ve vyhledávání datasetů.
+
+### Náhledový obrázek
+
+`public/og.png` (1200 × 630) je vygenerovaný ze šablony
+[`scripts/og-template.html`](scripts/og-template.html). Není součástí buildu —
+obrázek je zakomitovaný. Pro překreslení zkopírujte šablonu do `public/`,
+spusťte `npm run dev` a udělejte screenshot v 1200 × 630.
+
+Ukazuje poslední **publikovanou** hodnotu i s datem, ne dopočet. Statický
+obrázek by jinak časem tvrdil něco, co neplatí.
+
+### Font
+
+Inter je subsetovaný na znaky, které web skutečně používá — ASCII, česká
+diakritika, pevné mezery a symboly z výpočtů. Ze 133 kB zbylo **33 kB**.
+Regenerace po změně sady znaků:
+
+```bash
+pip install fonttools brotli
+pyftsubset public/fonts/<soubor>.woff2 --unicodes=<seznam> --flavor=woff2 \
+  --layout-features=kern,liga,tnum,calt --no-hinting
+```
+
+Pozor: znak, který v subsetu chybí, se vykreslí systémovým fontem. Při
+rozšiřování textů stojí za to sadu zkontrolovat.
+
+### Co tenhle web SEO nedá
+
+Na stránce je kolem 60 slov. Technicky je čistá, ale na obecné dotazy jako
+„státní dluh ČR“ proti Wikipedii nebo webu MF neuspěje — na to je potřeba
+obsah, který tu záměrně není. Návštěvnost tedy pojede spíš ze sdílení a
+odkazů než z vyhledávání.
 
 ## Nasazení na Vercel
 

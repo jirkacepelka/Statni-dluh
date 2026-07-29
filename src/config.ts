@@ -6,6 +6,11 @@
  */
 
 export interface SiteConfig {
+  /**
+   * Veřejná adresa webu bez koncového lomítka. Z ní se odvozuje canonical,
+   * og:url, sitemap i robots.txt — proto je jen na tomhle jednom místě.
+   */
+  siteUrl: string;
   /** Jméno provozovatele v patičce. */
   organisation: string;
   /** Podtitul vedle jména, jako štítek. */
@@ -24,6 +29,7 @@ export interface SiteConfig {
 }
 
 export const config: SiteConfig = {
+  siteUrl: 'https://dluh.voluntia.cz',
   organisation: 'Voluntia',
   tagline: 'Libertariánská strana',
   logo: '/logo-voluntia.svg',

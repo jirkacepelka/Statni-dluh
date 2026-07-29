@@ -1,13 +1,20 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { App } from './App';
 import './styles.css';
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Chybí #root element.');
 
-createRoot(root).render(
+const tree = (
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 );
+
+// V produkci je obsah předvykreslený při buildu, ve vývoji je kořen prázdný.
+if (root.hasChildNodes()) {
+  hydrateRoot(root, tree);
+} else {
+  createRoot(root).render(tree);
+}

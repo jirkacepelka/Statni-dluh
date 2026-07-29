@@ -6,3 +6,4 @@ dist/
 
 # MCP konfigurace může obsahovat tokeny
 .mcp.json
+dist-ssr/

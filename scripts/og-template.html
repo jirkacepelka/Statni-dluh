@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/fonts/inter.css" />
+    <style>
+      * { box-sizing: border-box; margin: 0; }
+      body {
+        width: 1200px;
+        height: 630px;
+        display: flex;
+        flex-direction: column;
+        padding: 70px;
+        background: #111111;
+        color: #ffffff;
+        font-family: Inter, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .main { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+      .label { font-size: 38px; font-weight: 800; letter-spacing: -0.02em; }
+      .amount {
+        font-size: 98px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .amount .unit { font-size: 0.33em; color: #ffd400; margin-left: 0.14em; }
+      .sub { margin-top: 20px; font-size: 27px; font-weight: 500; color: #b4b4b4; }
+      .sub b { color: #ffd400; font-weight: 700; }
+      .foot {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+      }
+      .foot img { height: 52px; opacity: 0.6; }
+      .foot .url { font-size: 27px; font-weight: 700; color: #ffd400; }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <p class="label">Státní dluh České republiky</p>
+      <p class="amount">3 726 800 000 000<span class="unit">kč</span></p>
+      <p class="sub">
+        Poslední publikovaný stav k 30. 6. 2026 &middot; roste o <b>859 mil. kč</b> každý den
+      </p>
+    </div>
+    <div class="foot">
+      <img src="/logo-voluntia.svg" alt="" />
+      <span class="url">dluh.voluntia.cz</span>
+    </div>
+  </body>
+</html>
