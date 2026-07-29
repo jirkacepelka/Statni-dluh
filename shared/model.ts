@@ -9,6 +9,7 @@
  */
 
 import { dataset } from './dataset';
+import { czk, czkRounded, percent } from './format';
 
 /** Na koho se dluh přepočítává. */
 export type Basis = 'obyvatel' | 'pracujici';
@@ -107,8 +108,10 @@ export interface Metric {
   unit: 'celkem' | 'ročně';
   /** Popisek pod číslem. */
   label: string;
-  /** Rozepsaný výpočet — zobrazuje se v metodice. */
+  /** Slovní zápis výpočtu — zobrazuje se v bublině u otazníku. */
   formula: string;
+  /** Tentýž výpočet s dosazenými hodnotami. */
+  substitution: string;
   /** Klíče z datasetu, ze kterých metrika vychází. */
   inputs: string[];
 }
@@ -117,7 +120,11 @@ export interface Metric {
 export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
   const people = basisCount(basis);
   const debt = debtAt(now).value;
-  const perCapita = basis === 'obyvatel' ? 'obyvatel' : 'zaměstnaných';
+  const perCapita =
+    basis === 'obyvatel' ? 'počet obyvatel ČR' : 'počet pracujících občanů ČR';
+  const deficit = dataset.budgetDeficit.value;
+  const yieldRate = dataset.marginalYield.value;
+  const peopleKey = basis === 'obyvatel' ? 'population' : 'employed';
 
   return [
     {
@@ -128,8 +135,9 @@ export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
         basis === 'obyvatel'
           ? 'Na obyvatele, včetně důchodců a nemluvňat'
           : 'Na jednoho zaměstnaného nebo podnikatele',
-      formula: `státní dluh ÷ počet ${perCapita}`,
-      inputs: ['debtAnchor', 'debtProjection', basis === 'obyvatel' ? 'population' : 'employed'],
+      formula: `Státní dluh ÷ ${perCapita}`,
+      substitution: `${czk(debt)} kč ÷ ${czk(people)}`,
+      inputs: ['debtAnchor', 'debtProjection', peopleKey],
     },
     {
       id: 'obsluha-na-osobu',
@@ -139,16 +147,18 @@ export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
         basis === 'obyvatel'
           ? 'Tolik stojí každého občana obsluha státního dluhu'
           : 'Tolik stojí každého pracujícího obsluha státního dluhu',
-      formula: `výdaje na obsluhu dluhu ÷ počet ${perCapita}`,
-      inputs: ['debtServiceCurrentYear', basis === 'obyvatel' ? 'population' : 'employed'],
+      formula: `Roční výdaje státu na úroky ze státního dluhu ÷ ${perCapita}`,
+      substitution: `${czkRounded(dataset.debtServiceCurrentYear.value)} ÷ ${czk(people)}`,
+      inputs: ['debtServiceCurrentYear', peopleKey],
     },
     {
       id: 'prirustek-na-osobu',
       value: annualInterestFromDeficit / people,
       unit: 'ročně',
       label: 'O tolik budete platit víc každý rok kvůli aktuálnímu schodku',
-      formula: `(schodek rozpočtu × výnos 10letého dluhopisu) ÷ počet ${perCapita}`,
-      inputs: ['budgetDeficit', 'marginalYield', basis === 'obyvatel' ? 'population' : 'employed'],
+      formula: `(Schodek rozpočtu × výnos 10letého státního dluhopisu) ÷ ${perCapita}`,
+      substitution: `(${czkRounded(deficit)} × ${percent(yieldRate, 2)}) ÷ ${czk(people)}`,
+      inputs: ['budgetDeficit', 'marginalYield', peopleKey],
     },
     {
       id: 'prirustek-celkem',
@@ -156,7 +166,8 @@ export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
       unit: 'ročně',
       label:
         'O tolik se zvýší náklady na obsluhu dluhu ročně, při zachování aktuálního schodku',
-      formula: 'schodek rozpočtu × výnos 10letého dluhopisu',
+      formula: 'Schodek rozpočtu × výnos 10letého státního dluhopisu',
+      substitution: `${czkRounded(deficit)} × ${percent(yieldRate, 2)}`,
       inputs: ['budgetDeficit', 'marginalYield'],
     },
   ];

@@ -1,6 +1,7 @@
 import { Users, Percent, TrendingUp, Landmark, type LucideIcon } from 'lucide-react';
 import { BASIS_LABELS, metrics, type Basis } from '../../shared/model';
 import { czk, czkRounded } from '../../shared/format';
+import { Explain } from './Explain';
 
 /**
  * Ikony podle významu metriky, ne podle placeholderů v návrhu:
@@ -64,6 +65,7 @@ export function Metrics({ basis, onBasisChange, now }: MetricsProps) {
                 <div className="metric-value">
                   <span className="amount">{display}</span>
                   {metric.unit === 'ročně' && <span className="per"> / rok</span>}
+                  <Explain formula={metric.formula} substitution={metric.substitution} />
                 </div>
                 <p className="metric-label">{metric.label}</p>
               </div>
