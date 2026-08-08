@@ -33,7 +33,8 @@ const DESCRIPTION =
 
 /**
  * Strukturovaná data. Kromě webu a provozovatele popisují i samotný
- * datový soubor včetně API, což ho zpřístupňuje vyhledávání datasetů.
+ * datový soubor, což ho zpřístupňuje vyhledávání datasetů. Odkaz na
+ * `/api/dluh` tu záměrně není — endpoint sice běží, ale web ho neinzeruje.
  */
 function structuredData(): string {
   const graph = [
@@ -62,7 +63,6 @@ function structuredData(): string {
         `Odhad státního dluhu ČR v reálném čase, přepočet na obyvatele a na ` +
         `pracující, náklady na obsluhu dluhu. Vychází z publikovaných hodnot ` +
         `Ministerstva financí ČR a Českého statistického úřadu.`,
-      license: 'https://creativecommons.org/licenses/by/4.0/',
       inLanguage: 'cs-CZ',
       isAccessibleForFree: true,
       dateModified: dataset.checkedAt,
@@ -74,13 +74,6 @@ function structuredData(): string {
         'výdaje na obsluhu státního dluhu',
         'schodek státního rozpočtu',
       ],
-      distribution: [
-        {
-          '@type': 'DataDownload',
-          encodingFormat: 'application/json',
-          contentUrl: `${config.siteUrl}/api/dluh`,
-        },
-      ],
       isBasedOn: [dataset.debtAnchor.url, dataset.population.url],
     },
   ];
@@ -91,9 +84,9 @@ function structuredData(): string {
 /** Značky, které se vkládají do <head> až při buildu. */
 export function head(): string {
   const url = `${config.siteUrl}/`;
-  // Generuje se při požadavku, takže náhled nese aktuální číslo.
-  // Statický /og.png zůstává v repozitáři jako záloha.
-  const image = `${config.siteUrl}/api/og`;
+  // Statický obrázek ze šablony. Ukazuje poslední *publikovanou* hodnotu
+  // s datem, takže nezestárne do nepravdy, i když ho síť zacachuje natrvalo.
+  const image = `${config.siteUrl}/og.png`;
 
   return [
     `<link rel="canonical" href="${url}" />`,
@@ -117,8 +110,8 @@ export function headInfo(): string {
     `<link rel="canonical" href="${url}" />`,
     `<meta property="og:url" content="${url}" />`,
     `<meta property="og:site_name" content="${config.organisation}" />`,
-    `<meta property="og:image" content="${config.siteUrl}/api/og" />`,
-    `<meta name="twitter:image" content="${config.siteUrl}/api/og" />`,
+    `<meta property="og:image" content="${config.siteUrl}/og.png" />`,
+    `<meta name="twitter:image" content="${config.siteUrl}/og.png" />`,
   ].join('\n    ');
 }
 

@@ -24,8 +24,6 @@ export interface SiteConfig {
   };
   /** Kontakt pro opravy dat. */
   contact: string | null;
-  /** Odkaz na zdrojový kód — dokládá, že se čísla nikde neohýbají. */
-  repository: string;
 }
 
 export const config: SiteConfig = {
@@ -39,5 +37,4 @@ export const config: SiteConfig = {
     instagram: 'https://www.instagram.com/voluntiacz/',
   },
   contact: null,
-  repository: 'https://github.com/jirkacepelka/Statni-dluh',
 };

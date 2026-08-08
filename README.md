@@ -14,7 +14,10 @@ Vercel. Bez databáze, bez backendu kromě jedné serverless funkce.
 
 > Metodika i dokumentace API jsou záměrně tady, ne na stránce. Stránka má být
 > jedna obrazovka s číslem; kdo chce vědět, odkud se bere, klikne na
-> „Metodika a zdroje“ v patičce a přijde sem.
+> „Informace a metodika“ v patičce a přijde na `/informace`.
+>
+> API a zdrojový kód web nezmiňuje vůbec — ani v textu, ani ve strukturovaných
+> datech, ani v `<link rel="alternate">`. Endpoint běží dál, jen se neinzeruje.
 
 
 Státní dluh se neměří v reálném čase. Ministerstvo financí ho publikuje
@@ -50,7 +53,8 @@ pololetí. Roční průměr je klidnější a bližší realitě.
 
 Cenou je, že počítadlo **na projekci MF ke konci roku nedosedne** — skončí
 zhruba 106 mld. Kč pod ní. Je to vědomá volba, ne chyba; API tento rozdíl
-vystavuje v poli `dluh.rozdilProtiProjekci`, aby se nedal přehlédnout.
+vystavuje v poli `dluh.rozdilProtiProjekci`, aby se nedal přehlédnout (na
+stránce se ale neuvádí, viz výše).
 
 Skutečný přírůstek je tak jako tak nerovnoměrný — dluh roste skokově podle
 emisního kalendáře, ne plynule.
@@ -132,6 +136,9 @@ Bez klíče, bez limitu, CORS otevřený. Odpověď obsahuje aktuální odhad, v
 čtyři metriky včetně rozepsaného vzorce, kontextová čísla a kompletní seznam
 zdrojů s odkazy.
 
+**Web na endpoint nikde neodkazuje** a dokumentací je jen tenhle README. Je to
+záměr, ne opomenutí — kdo bude API v budoucnu měnit, ať s tím počítá.
+
 Pro vlastní počítadlo se nedotazujte opakovaně — vezměte `dluh.odhad`
 a `dluh.rustZaSekundu` a dopočítejte si zbytek lokálně.
 
@@ -197,29 +204,25 @@ adresa zapsaná. Odvozuje se z ní canonical, `og:url`, `og:image`,
 ### Strukturovaná data
 
 V hlavičce je JSON-LD s `WebSite`, `Organization` a `Dataset`. Ten poslední
-popisuje data včetně odkazu na `/api/dluh` jako `DataDownload`, takže se web
-může objevit i ve vyhledávání datasetů.
+popisuje data, takže se web může objevit i ve vyhledávání datasetů. Odkaz na
+`/api/dluh` jako `DataDownload` tam **záměrně není** — web endpoint neinzeruje.
+Licenci `Dataset` neuvádí taky záměrně: stránka žádnou nedeklaruje, tak by ji
+strukturovaná data neměla tvrdit za ni.
 
 ### Náhledový obrázek
 
-`og:image` míří na [`api/og.tsx`](api/og.tsx) — edge funkci, která obrázek
-vykreslí až při požadavku, takže nese aktuální číslo. Počítá stejným modelem
-jako web i `/api/dluh`.
+`og:image` míří na statický [`public/og.png`](public/og.png), vyrobený ze
+šablony [`scripts/og-template.html`](scripts/og-template.html). Ukazuje
+poslední **publikovanou** hodnotu s datem, takže nezestárne do nepravdy.
 
-**Provoz to nezatíží.** `og:image` nestahují návštěvníci; volají ho jen
-crawleři sociálních sítí při prvním scrapu odkazu. S hodinovou edge cache se
-funkce spustí nejvýš 24× denně bez ohledu na počet sdílení. Render trvá kolem
-300 ms.
+**Dynamický náhled by stejně nefungoval.** Facebook i LinkedIn si obrázek
+k dané URL zapamatují prakticky natrvalo, X na dlouho. Čerstvé číslo by tedy
+uvidělo jen první scrape každé URL — kdo sdílí odkaz jako druhý, dostane
+obrázek z prvního scrapu. Průběžně se to měnit nebude, takže statický obrázek
+s publikovanou hodnotou je poctivější než zamrzlý dopočet.
 
-**Čekat od toho živý náhled ale nejde.** Facebook i LinkedIn si obrázek k dané
-URL zapamatují prakticky natrvalo, X na dlouho. Čerstvé číslo tedy uvidí jen
-první scrape každé URL — kdo sdílí odkaz jako druhý, dostane obrázek z prvního
-scrapu. Průběžně se to měnit nebude.
-
-`public/og.png` je statická záloha ze šablony
-[`scripts/og-template.html`](scripts/og-template.html), kdyby funkce
-selhala. Na rozdíl od dynamické verze ukazuje poslední **publikovanou**
-hodnotu s datem, aby nezestárla do nepravdy.
+Edge funkce [`api/og.tsx`](api/og.tsx), která obrázek vykreslovala až při
+požadavku, v repozitáři zůstává, ale **nic ji nevolá**.
 
 #### Fonty pro obrázek
 
@@ -268,9 +271,9 @@ složku `api/`. Žádné proměnné prostředí nejsou potřeba.
 ## Před spuštěním doplnit
 
 [`src/config.ts`](src/config.ts) obsahuje zástupné hodnoty pro patičku:
-název provozovatele, logo, odkazy na web a sociální sítě, kontakt a odkaz na
-repozitář. Dokud jsou odkazy `null`, patička je nezobrazí — stránka radši
-neuvede nic než něco nepravdivého.
+název provozovatele, logo, odkazy na web a sociální sítě a kontakt. Dokud jsou
+odkazy `null`, patička je nezobrazí — stránka radši neuvede nic než něco
+nepravdivého.
 
 ## Struktura
 
