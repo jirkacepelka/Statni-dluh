@@ -204,29 +204,25 @@ adresa zapsaná. Odvozuje se z ní canonical, `og:url`, `og:image`,
 ### Strukturovaná data
 
 V hlavičce je JSON-LD s `WebSite`, `Organization` a `Dataset`. Ten poslední
-popisuje data včetně odkazu na `/api/dluh` jako `DataDownload`, takže se web
-může objevit i ve vyhledávání datasetů.
+popisuje data, takže se web může objevit i ve vyhledávání datasetů. Odkaz na
+`/api/dluh` jako `DataDownload` tam **záměrně není** — web endpoint neinzeruje.
+Licenci `Dataset` neuvádí taky záměrně: stránka žádnou nedeklaruje, tak by ji
+strukturovaná data neměla tvrdit za ni.
 
 ### Náhledový obrázek
 
-`og:image` míří na [`api/og.tsx`](api/og.tsx) — edge funkci, která obrázek
-vykreslí až při požadavku, takže nese aktuální číslo. Počítá stejným modelem
-jako web i `/api/dluh`.
+`og:image` míří na statický [`public/og.png`](public/og.png), vyrobený ze
+šablony [`scripts/og-template.html`](scripts/og-template.html). Ukazuje
+poslední **publikovanou** hodnotu s datem, takže nezestárne do nepravdy.
 
-**Provoz to nezatíží.** `og:image` nestahují návštěvníci; volají ho jen
-crawleři sociálních sítí při prvním scrapu odkazu. S hodinovou edge cache se
-funkce spustí nejvýš 24× denně bez ohledu na počet sdílení. Render trvá kolem
-300 ms.
+**Dynamický náhled by stejně nefungoval.** Facebook i LinkedIn si obrázek
+k dané URL zapamatují prakticky natrvalo, X na dlouho. Čerstvé číslo by tedy
+uvidělo jen první scrape každé URL — kdo sdílí odkaz jako druhý, dostane
+obrázek z prvního scrapu. Průběžně se to měnit nebude, takže statický obrázek
+s publikovanou hodnotou je poctivější než zamrzlý dopočet.
 
-**Čekat od toho živý náhled ale nejde.** Facebook i LinkedIn si obrázek k dané
-URL zapamatují prakticky natrvalo, X na dlouho. Čerstvé číslo tedy uvidí jen
-první scrape každé URL — kdo sdílí odkaz jako druhý, dostane obrázek z prvního
-scrapu. Průběžně se to měnit nebude.
-
-`public/og.png` je statická záloha ze šablony
-[`scripts/og-template.html`](scripts/og-template.html), kdyby funkce
-selhala. Na rozdíl od dynamické verze ukazuje poslední **publikovanou**
-hodnotu s datem, aby nezestárla do nepravdy.
+Edge funkce [`api/og.tsx`](api/og.tsx), která obrázek vykreslovala až při
+požadavku, v repozitáři zůstává, ale **nic ji nevolá**.
 
 #### Fonty pro obrázek
 
