@@ -14,7 +14,10 @@ Vercel. Bez databáze, bez backendu kromě jedné serverless funkce.
 
 > Metodika i dokumentace API jsou záměrně tady, ne na stránce. Stránka má být
 > jedna obrazovka s číslem; kdo chce vědět, odkud se bere, klikne na
-> „Metodika a zdroje“ v patičce a přijde sem.
+> „Informace a metodika“ v patičce a přijde na `/informace`.
+>
+> API a zdrojový kód web nezmiňuje vůbec — ani v textu, ani ve strukturovaných
+> datech, ani v `<link rel="alternate">`. Endpoint běží dál, jen se neinzeruje.
 
 
 Státní dluh se neměří v reálném čase. Ministerstvo financí ho publikuje
@@ -50,7 +53,8 @@ pololetí. Roční průměr je klidnější a bližší realitě.
 
 Cenou je, že počítadlo **na projekci MF ke konci roku nedosedne** — skončí
 zhruba 106 mld. Kč pod ní. Je to vědomá volba, ne chyba; API tento rozdíl
-vystavuje v poli `dluh.rozdilProtiProjekci`, aby se nedal přehlédnout.
+vystavuje v poli `dluh.rozdilProtiProjekci`, aby se nedal přehlédnout (na
+stránce se ale neuvádí, viz výše).
 
 Skutečný přírůstek je tak jako tak nerovnoměrný — dluh roste skokově podle
 emisního kalendáře, ne plynule.
@@ -131,6 +135,9 @@ GET /api/dluh?t=2026-12-31T23:59:59Z
 Bez klíče, bez limitu, CORS otevřený. Odpověď obsahuje aktuální odhad, všechny
 čtyři metriky včetně rozepsaného vzorce, kontextová čísla a kompletní seznam
 zdrojů s odkazy.
+
+**Web na endpoint nikde neodkazuje** a dokumentací je jen tenhle README. Je to
+záměr, ne opomenutí — kdo bude API v budoucnu měnit, ať s tím počítá.
 
 Pro vlastní počítadlo se nedotazujte opakovaně — vezměte `dluh.odhad`
 a `dluh.rustZaSekundu` a dopočítejte si zbytek lokálně.
@@ -268,9 +275,9 @@ složku `api/`. Žádné proměnné prostředí nejsou potřeba.
 ## Před spuštěním doplnit
 
 [`src/config.ts`](src/config.ts) obsahuje zástupné hodnoty pro patičku:
-název provozovatele, logo, odkazy na web a sociální sítě, kontakt a odkaz na
-repozitář. Dokud jsou odkazy `null`, patička je nezobrazí — stránka radši
-neuvede nic než něco nepravdivého.
+název provozovatele, logo, odkazy na web a sociální sítě a kontakt. Dokud jsou
+odkazy `null`, patička je nezobrazí — stránka radši neuvede nic než něco
+nepravdivého.
 
 ## Struktura
 

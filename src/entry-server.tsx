@@ -33,7 +33,8 @@ const DESCRIPTION =
 
 /**
  * Strukturovaná data. Kromě webu a provozovatele popisují i samotný
- * datový soubor včetně API, což ho zpřístupňuje vyhledávání datasetů.
+ * datový soubor, což ho zpřístupňuje vyhledávání datasetů. Odkaz na
+ * `/api/dluh` tu záměrně není — endpoint sice běží, ale web ho neinzeruje.
  */
 function structuredData(): string {
   const graph = [
@@ -73,13 +74,6 @@ function structuredData(): string {
         'státní dluh na obyvatele',
         'výdaje na obsluhu státního dluhu',
         'schodek státního rozpočtu',
-      ],
-      distribution: [
-        {
-          '@type': 'DataDownload',
-          encodingFormat: 'application/json',
-          contentUrl: `${config.siteUrl}/api/dluh`,
-        },
       ],
       isBasedOn: [dataset.debtAnchor.url, dataset.population.url],
     },

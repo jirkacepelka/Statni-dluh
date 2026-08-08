@@ -68,8 +68,8 @@ export function Informace() {
             <div className="doc-callout">
               <strong>Tento web není oficiálním zdrojem informací o státním dluhu.</strong> Neprovozuje
               ho Ministerstvo financí, Český statistický úřad ani žádný jiný orgán veřejné moci a
-              není s nimi nijak spojen. Provozovatelem je {config.organisation}
-              {config.tagline ? `, ${config.tagline.toLowerCase()}` : ''}.
+              není s nimi nijak spojen. Provozovatelem je{' '}
+              {config.tagline ? `${config.tagline} ${config.organisation}` : config.organisation}.
             </div>
 
             <p>
@@ -133,8 +133,7 @@ export function Informace() {
             <p>
               Cenou za to je, že počítadlo na projekci ministerstva ke konci roku nedosedne. Skončí
               zhruba <strong>{czkRounded(shortfallAgainstProjection)}</strong> pod ní. Je to vědomá
-              volba, ne chyba; rozdíl je vidět i v API v poli{' '}
-              <code>dluh.rozdilProtiProjekci</code>.
+              volba, ne chyba.
             </p>
 
             <h3>Co se záměrně nepočítá</h3>
@@ -219,10 +218,7 @@ export function Informace() {
               </table>
             </div>
 
-            <p>
-              Všechny hodnoty naposledy zkontrolovány {czDate(dataset.checkedAt)}. Data i výpočty
-              jsou dostupné jako JSON na <a href="/api/dluh">/api/dluh</a>, bez klíče a bez limitu.
-            </p>
+            <p>Všechny hodnoty naposledy zkontrolovány {czDate(dataset.checkedAt)}.</p>
           </section>
 
           {/* -------------------------------------------------- soukromí */}
@@ -270,10 +266,6 @@ export function Informace() {
               rozsáhlé sledování. Dokud na odkaz nekliknete, žádné spojení s nimi nevzniká a tyto
               weby se o vaší návštěvě nedozvědí.
             </p>
-            <p>
-              Rozhraní <a href="/api/dluh">/api/dluh</a> je veřejné, nevyžaduje přihlášení a
-              neukládá si, kdo se na něj ptá.
-            </p>
 
             <h3>Vaše práva</h3>
             <p>
@@ -287,26 +279,6 @@ export function Informace() {
               ) : (
                 <> přes kontakt uvedený na jeho oficiálním webu.</>
               )}
-            </p>
-          </section>
-
-          {/* --------------------------------------------------- licence */}
-
-          <section aria-labelledby="licence">
-            <h2 id="licence">Data, kód a licence</h2>
-            <p>
-              Vstupní data pocházejí z veřejných zdrojů Ministerstva financí ČR, Českého
-              statistického úřadu a České národní banky. Zdrojový kód webu i všechny výpočty jsou
-              veřejné — najdete je{' '}
-              <a href={config.repository} target="_blank" rel="noopener noreferrer">
-                na GitHubu
-              </a>
-              . Můžete si tedy sami ověřit, že se čísla nikde neohýbají.
-            </p>
-            <p>
-              Grafiku a text webu můžete šířit s uvedením zdroje. Logo a název provozovatele jsou
-              chráněné a nelze je používat způsobem, který by naznačoval spojení nebo souhlas, aniž
-              by byl udělen.
             </p>
           </section>
 
