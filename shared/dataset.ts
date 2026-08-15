@@ -135,6 +135,28 @@ export const dataset = {
     url: 'https://csu.gov.cz/zamestnanost-a-nezamestnanost-vsps',
     note: 'Zaměstnanci i podnikatelé, 15+ let. Meziročně o 58,6 tis. více.',
   } satisfies Sourced<number>,
+
+  /**
+   * Počet zaměstnanců sektoru vládních institucí (S.13) — stát, kraje, obce,
+   * příspěvkové organizace, veřejné vysoké školy a zdravotní pojišťovny.
+   * Odečítá se od počtu pracujících na záložce „Pracující občan“.
+   *
+   * Záměrně nejde o celý veřejný sektor. Ten navíc zahrnuje státní a
+   * komunální firmy (ČEZ, ČD, Česká pošta, dopravní podniky), jejichž
+   * zaměstnanci jsou placeni z tržeb, ne z veřejných rozpočtů — na ty
+   * argument o mzdě jako výdaji rozpočtu nesedí.
+   *
+   * POZOR: jediná hodnota v datasetu, která není ověřená proti primárnímu
+   * zdroji, a nejstarší z nich. Před dalším publikováním ověřit a
+   * aktualizovat, viz `note`.
+   */
+  publicSectorEmployed: {
+    value: 942_800,
+    asOf: '2021-12-31',
+    source: 'Národní rozpočtová rada – Informační studie: Vývoj počtu zaměstnanců v sektoru vládních institucí',
+    url: 'https://www.rozpoctovarada.cz/publikace/informacni-studie-vyvoj-poctu-zamestnancu-v-sektoru-vladnich-instituci/',
+    note: 'Fyzické osoby, průměr za rok 2021 (přepočteno na plné úvazky 879,3 tis.). Hodnota zatím nebyla ověřena proti primárnímu zdroji a je výrazně starší než ostatní čísla. Metodika se navíc přesně nepřekrývá s výběrovým šetřením pracovních sil, ze kterého je počet pracujících — rozdíl je řádově správný, ne přesný na jednotky.',
+  } satisfies Sourced<number>,
 } as const;
 
 export type Dataset = typeof dataset;

@@ -181,6 +181,74 @@ a {
   color: var(--accent-ink);
 }
 
+/* ------------------------------------------------- přepínač u pracujících */
+
+/* Sedí v mezeře pod záložkami, kterou .tabs nechává svým margin-bottom. */
+.scope {
+  margin: -12px 0 20px;
+}
+
+.scope-switch {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.scope-track {
+  flex: none;
+  width: 34px;
+  height: 20px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--surface-hover);
+  transition: background-color 120ms ease;
+}
+
+.scope-thumb {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  transition: transform 120ms ease, background-color 120ms ease;
+}
+
+.scope-switch[aria-checked='true'] .scope-track {
+  background: var(--accent);
+}
+
+.scope-switch[aria-checked='true'] .scope-thumb {
+  background: var(--accent-ink);
+  transform: translateX(14px);
+}
+
+.scope-switch[aria-checked='false'] {
+  color: var(--text-muted);
+}
+
+.scope-note {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scope-track,
+  .scope-thumb {
+    transition: none;
+  }
+}
+
 /* --------------------------------------------------------------- metrics */
 
 /* Čtyři sloupce po 317,5 px s mezerou 10 px, jak je v návrhu.

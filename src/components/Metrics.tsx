@@ -1,5 +1,12 @@
 import { Users, Percent, TrendingUp, Landmark, type LucideIcon } from 'lucide-react';
-import { BASIS_LABELS, metrics, type Basis } from '../../shared/model';
+import {
+  BASIS_LABELS,
+  metrics,
+  privateSectorEmployed,
+  type Basis,
+  type PublicSector,
+} from '../../shared/model';
+import { dataset } from '../../shared/dataset';
 import { czk, czkRounded } from '../../shared/format';
 import { Explain } from './Explain';
 
@@ -19,12 +26,21 @@ const BASES: Basis[] = ['obyvatel', 'pracujici'];
 interface MetricsProps {
   basis: Basis;
   onBasisChange: (basis: Basis) => void;
+  publicSector: PublicSector;
+  onPublicSectorChange: (publicSector: PublicSector) => void;
   /** Aktuální dluh — metriky se přepočítávají spolu s počítadlem. */
   now: number;
 }
 
-export function Metrics({ basis, onBasisChange, now }: MetricsProps) {
-  const items = metrics(basis, now);
+export function Metrics({
+  basis,
+  onBasisChange,
+  publicSector,
+  onPublicSectorChange,
+  now,
+}: MetricsProps) {
+  const items = metrics(basis, publicSector, now);
+  const excluded = publicSector === 'vynechat';
 
   return (
     <section className="panel" aria-labelledby="prepocet">
@@ -48,6 +64,39 @@ export function Metrics({ basis, onBasisChange, now }: MetricsProps) {
           </button>
         ))}
       </div>
+
+      {/* Přepínač patří jen k pracujícím — u obyvatel se nikdo neodečítá. */}
+      {basis === 'pracujici' && (
+        <div className="scope">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={excluded}
+            aria-controls="metriky"
+            className="scope-switch"
+            onClick={() => onPublicSectorChange(excluded ? 'zapocitat' : 'vynechat')}
+          >
+            <span className="scope-track" aria-hidden="true">
+              <span className="scope-thumb" />
+            </span>
+            Bez zaměstnanců veřejného sektoru
+          </button>
+
+          <p className="scope-note">
+            {excluded ? (
+              <>
+                Odečteno {czk(dataset.publicSectorEmployed.value)} lidí placených z veřejných
+                rozpočtů. Zbývá {czk(privateSectorEmployed)} pracujících v soukromém sektoru.
+              </>
+            ) : (
+              <>
+                Započítáni všichni pracující, tedy i {czk(dataset.publicSectorEmployed.value)}{' '}
+                zaměstnanců veřejného sektoru.
+              </>
+            )}
+          </p>
+        </div>
+      )}
 
       <ul className="metrics" id="metriky" role="tabpanel" aria-labelledby={`tab-${basis}`}>
         {items.map((metric) => {

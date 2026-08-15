@@ -19,6 +19,23 @@ export const BASIS_LABELS: Record<Basis, string> = {
   pracujici: 'Pracující občan',
 };
 
+/**
+ * Jak se u základu „pracující občan“ nakládá se zaměstnanci veřejného
+ * sektoru. Ti jsou placení z veřejných rozpočtů, takže jejich mzda je
+ * výdajem téhož rozpočtu, do kterého odvádějí daně — do splácení dluhu
+ * proto nepřispívají čistě jako pracující v soukromém sektoru.
+ *
+ * Výchozí je `vynechat`. Je to hodnotová volba, ne účetní pravda, a
+ * stránka ji jako volbu přiznává — proto je přepínač vidět a jde vypnout.
+ */
+export type PublicSector = 'vynechat' | 'zapocitat';
+
+export const DEFAULT_PUBLIC_SECTOR: PublicSector = 'vynechat';
+
+/** Pracující mimo veřejný sektor — základ po odečtení. */
+export const privateSectorEmployed =
+  dataset.employed.value - dataset.publicSectorEmployed.value;
+
 const MS_PER_SECOND = 1000;
 
 /** Půlnoc UTC daného dne — konec dne pro `asOf` hodnoty. */
@@ -93,9 +110,18 @@ export function debtAt(now: number = Date.now()): {
   };
 }
 
-/** Kolik lidí nese dluh podle zvoleného základu. */
-export function basisCount(basis: Basis): number {
-  return basis === 'obyvatel' ? dataset.population.value : dataset.employed.value;
+/**
+ * Kolik lidí nese dluh podle zvoleného základu.
+ *
+ * U základu „obyvatel“ nemá `publicSector` smysl — děti a důchodci se
+ * neodečítají, celý smysl té záložky je, že zahrnuje všechny.
+ */
+export function basisCount(
+  basis: Basis,
+  publicSector: PublicSector = DEFAULT_PUBLIC_SECTOR,
+): number {
+  if (basis === 'obyvatel') return dataset.population.value;
+  return publicSector === 'vynechat' ? privateSectorEmployed : dataset.employed.value;
 }
 
 /**
@@ -136,14 +162,32 @@ export interface Metric {
 }
 
 /** Čtyři metriky pod počítadlem, přepočtené na zvolený základ. */
-export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
-  const people = basisCount(basis);
+export function metrics(
+  basis: Basis,
+  publicSector: PublicSector = DEFAULT_PUBLIC_SECTOR,
+  now: number = Date.now(),
+): Metric[] {
+  const people = basisCount(basis, publicSector);
   const debt = debtAt(now).value;
+  const withoutPublic = basis === 'pracujici' && publicSector === 'vynechat';
   const perCapita =
-    basis === 'obyvatel' ? 'počet obyvatel ČR' : 'počet pracujících občanů ČR';
+    basis === 'obyvatel'
+      ? 'počet obyvatel ČR'
+      : withoutPublic
+        ? 'počet pracujících ČR mimo veřejný sektor'
+        : 'počet pracujících občanů ČR';
   const deficit = dataset.budgetDeficit.value;
   const yieldRate = dataset.marginalYield.value;
-  const peopleKey = basis === 'obyvatel' ? 'population' : 'employed';
+  const peopleKeys =
+    basis === 'obyvatel'
+      ? ['population']
+      : withoutPublic
+        ? ['employed', 'publicSectorEmployed']
+        : ['employed'];
+  // Odečtení musí být vidět i v dosazení, ne jen ve výsledku.
+  const peopleShown = withoutPublic
+    ? `(${czk(dataset.employed.value)} − ${czk(dataset.publicSectorEmployed.value)})`
+    : czk(people);
 
   return [
     {
@@ -153,10 +197,12 @@ export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
       label:
         basis === 'obyvatel'
           ? 'Na obyvatele, včetně důchodců a nemluvňat'
-          : 'Na jednoho zaměstnaného nebo podnikatele',
+          : withoutPublic
+            ? 'Na jednoho pracujícího mimo veřejný sektor'
+            : 'Na jednoho zaměstnaného nebo podnikatele',
       formula: `Státní dluh ÷ ${perCapita}`,
-      substitution: `${czk(debt)} kč ÷ ${czk(people)}`,
-      inputs: ['debtAnchor', 'debtProjection', peopleKey],
+      substitution: `${czk(debt)} kč ÷ ${peopleShown}`,
+      inputs: ['debtAnchor', 'debtProjection', ...peopleKeys],
     },
     {
       id: 'obsluha-na-osobu',
@@ -165,10 +211,12 @@ export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
       label:
         basis === 'obyvatel'
           ? 'Tolik stojí každého občana obsluha státního dluhu'
-          : 'Tolik stojí každého pracujícího obsluha státního dluhu',
+          : withoutPublic
+            ? 'Tolik stojí každého pracujícího mimo veřejný sektor obsluha státního dluhu'
+            : 'Tolik stojí každého pracujícího obsluha státního dluhu',
       formula: `Roční výdaje státu na úroky ze státního dluhu ÷ ${perCapita}`,
-      substitution: `${czkRounded(dataset.debtServiceCurrentYear.value)} ÷ ${czk(people)}`,
-      inputs: ['debtServiceCurrentYear', peopleKey],
+      substitution: `${czkRounded(dataset.debtServiceCurrentYear.value)} ÷ ${peopleShown}`,
+      inputs: ['debtServiceCurrentYear', ...peopleKeys],
     },
     {
       id: 'prirustek-na-osobu',
@@ -176,8 +224,8 @@ export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
       unit: 'ročně',
       label: 'O tolik budete platit víc každý rok kvůli aktuálnímu schodku',
       formula: `(Schodek rozpočtu × průměrný výnos nově emitovaných státních dluhopisů) ÷ ${perCapita}`,
-      substitution: `(${czkRounded(deficit)} × ${percent(yieldRate, 2)}) ÷ ${czk(people)}`,
-      inputs: ['budgetDeficit', 'marginalYield', peopleKey],
+      substitution: `(${czkRounded(deficit)} × ${percent(yieldRate, 2)}) ÷ ${peopleShown}`,
+      inputs: ['budgetDeficit', 'marginalYield', ...peopleKeys],
     },
     {
       id: 'prirustek-celkem',
@@ -193,11 +241,16 @@ export function metrics(basis: Basis, now: number = Date.now()): Metric[] {
 }
 
 /** Kompletní snapshot pro API i pro server-side render. */
-export function snapshot(basis: Basis, now: number = Date.now()) {
+export function snapshot(
+  basis: Basis,
+  publicSector: PublicSector = DEFAULT_PUBLIC_SECTOR,
+  now: number = Date.now(),
+) {
   const debt = debtAt(now);
   return {
     generovano: new Date(now).toISOString(),
     zaklad: basis,
+    verejnySektor: publicSector,
     dluh: {
       odhad: debt.value,
       rustZaSekundu: growthPerSecond,
@@ -209,7 +262,7 @@ export function snapshot(basis: Basis, now: number = Date.now()) {
       podilNaHdp: dataset.debtToGdp.value,
       zaProjekci: debt.beyondProjection,
     },
-    metriky: metrics(basis, now),
+    metriky: metrics(basis, publicSector, now),
     kontext: {
       schodekRozpoctu: dataset.budgetDeficit.value,
       schodekSkutecnyKDatu: dataset.cashDeficitToDate.value,
@@ -217,9 +270,12 @@ export function snapshot(basis: Basis, now: number = Date.now()) {
       obsluhaDluhuMezirocne: debtServiceYoyChange,
       pocetObyvatel: dataset.population.value,
       pocetPracujicich: dataset.employed.value,
+      pocetPracujicichVerejnySektor: dataset.publicSectorEmployed.value,
+      pocetPracujicichSoukromySektor: privateSectorEmployed,
+      pouzityZaklad: basisCount(basis, publicSector),
     },
     metodika:
-      'Dluh se neměří v reálném čase. Zobrazená hodnota vychází z posledního publikovaného stavu státního dluhu a roste průměrným ročním tempem podle plánu MF na celý rok. Skutečný přírůstek je nerovnoměrný — závisí na emisním kalendáři. Protože je plán MF zadní, odhad ke konci roku zůstane pod projekcí; rozdíl je v poli "dluh.rozdilProtiProjekci".',
+      'Dluh se neměří v reálném čase. Zobrazená hodnota vychází z posledního publikovaného stavu státního dluhu a roste průměrným ročním tempem podle plánu MF na celý rok. Skutečný přírůstek je nerovnoměrný — závisí na emisním kalendáři. Protože je plán MF zadní, odhad ke konci roku zůstane pod projekcí; rozdíl je v poli "dluh.rozdilProtiProjekci". U základu "pracujici" se ve výchozím nastavení odečítají zaměstnanci veřejného sektoru (verejnySektor=vynechat) — je to hodnotová volba, ne účetní pravda; parametrem verejnySektor=zapocitat se vypne.',
     zdroje: Object.entries(dataset)
       .filter(([, v]) => typeof v === 'object' && v !== null && 'url' in v)
       .map(([key, v]) => {
