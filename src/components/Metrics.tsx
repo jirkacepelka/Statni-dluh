@@ -82,19 +82,29 @@ export function Metrics({
             Bez zaměstnanců veřejného sektoru
           </button>
 
-          <p className="scope-note">
+          <Explain label="Co přepínač dělá">
             {excluded ? (
               <>
-                Odečteno {czk(dataset.publicSectorEmployed.value)} lidí placených z veřejných
-                rozpočtů. Zbývá {czk(privateSectorEmployed)} pracujících v soukromém sektoru.
+                <span className="explain-formula">
+                  Odečteni zaměstnanci veřejného sektoru — lidé placení z veřejných rozpočtů.
+                </span>
+                <span className="explain-substitution">
+                  {czk(dataset.employed.value)} − {czk(dataset.publicSectorEmployed.value)} ={' '}
+                  {czk(privateSectorEmployed)} pracujících
+                </span>
               </>
             ) : (
               <>
-                Započítáni všichni pracující, tedy i {czk(dataset.publicSectorEmployed.value)}{' '}
-                zaměstnanců veřejného sektoru.
+                <span className="explain-formula">
+                  Započítáni všichni pracující, tedy i zaměstnanci veřejného sektoru.
+                </span>
+                <span className="explain-substitution">
+                  {czk(dataset.employed.value)} pracujících, z toho{' '}
+                  {czk(dataset.publicSectorEmployed.value)} ve veřejném sektoru
+                </span>
               </>
             )}
-          </p>
+          </Explain>
         </div>
       )}
 
@@ -116,7 +126,12 @@ export function Metrics({
                     {display}
                   </span>
                   {metric.unit === 'ročně' && <span className="per"> / rok</span>}
-                  <Explain formula={metric.formula} substitution={metric.substitution} />
+                  <Explain>
+                    <span className="explain-formula">{metric.formula}</span>
+                    <span className="explain-substitution" suppressHydrationWarning>
+                      {metric.substitution}
+                    </span>
+                  </Explain>
                 </div>
                 <p className="metric-label">{metric.label}</p>
               </div>

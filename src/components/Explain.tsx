@@ -1,20 +1,21 @@
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 
 interface ExplainProps {
-  /** Slovní zápis výpočtu. */
-  formula: string;
-  /** Tentýž výpočet s dosazenými čísly. */
-  substitution: string;
+  /** Popisek tlačítka pro odečítače obrazovky. */
+  label?: string;
+  /** Obsah bubliny. Řádky se sázejí přes `.explain-formula` a `-substitution`. */
+  children: ReactNode;
 }
 
 /**
- * Otazník u metriky, který po najetí ukáže, jak se k číslu došlo.
+ * Otazník, který po najetí ukáže vysvětlení k tomu, co stojí vedle něj —
+ * u metriky výpočet, u přepínače jeho dopad.
  *
  * Otevírá se najetím myší i fokusem z klávesnice. Na dotykových
  * displejích hover neexistuje — tam ho otevře klepnutí, protože tlačítko
  * fokus dostane, a klepnutí jinam ho zase zavře.
  */
-export function Explain({ formula, substitution }: ExplainProps) {
+export function Explain({ label = 'Jak se k číslu došlo', children }: ExplainProps) {
   const id = useId();
   const [open, setOpen] = useState(false);
 
@@ -23,7 +24,7 @@ export function Explain({ formula, substitution }: ExplainProps) {
       <button
         type="button"
         className="explain-trigger"
-        aria-label="Jak se k číslu došlo"
+        aria-label={label}
         aria-expanded={open}
         aria-describedby={open ? id : undefined}
         onClick={() => setOpen(true)}
@@ -37,10 +38,7 @@ export function Explain({ formula, substitution }: ExplainProps) {
       </button>
 
       <span role="tooltip" id={id} className="explain-bubble" hidden={!open}>
-        <span className="explain-formula">{formula}</span>
-        <span className="explain-substitution" suppressHydrationWarning>
-          {substitution}
-        </span>
+        {children}
       </span>
     </span>
   );

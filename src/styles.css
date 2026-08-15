@@ -183,9 +183,13 @@ a {
 
 /* ------------------------------------------------- přepínač u pracujících */
 
-/* Sedí v mezeře pod záložkami, kterou .tabs nechává svým margin-bottom. */
+/* Sedí v mezeře pod záložkami, kterou .tabs nechává svým margin-bottom.
+   Zároveň kotva pro bublinu s vysvětlením, aby nevytekla ze stránky. */
 .scope {
-  margin: -12px 0 20px;
+  display: flex;
+  align-items: center;
+  margin: -12px 0 22px;
+  position: relative;
 }
 
 .scope-switch {
@@ -233,13 +237,6 @@ a {
 
 .scope-switch[aria-checked='false'] {
   color: var(--text-muted);
-}
-
-.scope-note {
-  margin: 4px 0 0;
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--text-faint);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -341,6 +338,10 @@ a {
 .explain-bubble {
   position: absolute;
   z-index: 5;
+  /* Bublina leží přes obsah pod sebou — u přepínače rovnou přes řádek
+     metrik. Kdyby brala kliknutí, na dotyku by první klepnutí na otazník
+     pod ní jen zmizelo. Vysvětlení se nikam neklika, takže ho pouštíme skrz. */
+  pointer-events: none;
   top: calc(100% + 8px);
   left: 0;
   display: flex;
