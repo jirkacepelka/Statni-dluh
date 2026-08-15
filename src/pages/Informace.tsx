@@ -7,6 +7,7 @@ import {
   annualInterestFromDeficit,
   debtServiceYoyChange,
   shortfallAgainstProjection,
+  privateSectorEmployed,
 } from '../../shared/model';
 import { czk, czkRounded, czDate, percent } from '../../shared/format';
 import { config } from '../config';
@@ -24,6 +25,7 @@ const LABELS: Record<string, string> = {
   marginalYield: 'Průměrný výnos nově emitovaných státních dluhopisů',
   population: 'Počet obyvatel ČR',
   employed: 'Počet zaměstnaných osob',
+  publicSectorEmployed: 'Počet zaměstnanců veřejného sektoru',
 };
 
 interface SourcedEntry {
@@ -42,7 +44,9 @@ const entries = Object.entries(dataset).filter(
 function formatValue(key: string, value: number): string {
   if (key === 'debtToGdp') return percent(value);
   if (key === 'marginalYield') return percent(value, 2);
-  if (key === 'population' || key === 'employed') return czk(value);
+  if (key === 'population' || key === 'employed' || key === 'publicSectorEmployed') {
+    return czk(value);
+  }
   return `${czk(value)} kč`;
 }
 
@@ -159,6 +163,43 @@ export function Informace() {
               všech.
             </p>
 
+            <h3>Odečtení zaměstnanců veřejného sektoru</h3>
+            <p>
+              U záložky <strong>Pracující občan</strong> je{' '}
+              <strong>ve výchozím stavu zapnutý</strong> přepínač, který od počtu pracujících
+              odečítá {czk(dataset.publicSectorEmployed.value)} zaměstnanců sektoru vládních
+              institucí — tedy stát, kraje, obce, příspěvkové organizace, veřejné vysoké školy a
+              zdravotní pojišťovny. Zbývá {czk(privateSectorEmployed)} pracujících mimo veřejné
+              rozpočty. Je to týž sektor, jehož dluh se podle sekce výše záměrně nepočítá — tady ale
+              nejde o dluh, nýbrž o to, kdo je z veřejných rozpočtů placený.
+            </p>
+            <p>
+              Důvod: mzda takového zaměstnance je výdajem téhož rozpočtu, do kterého odvádí daně.
+              Formálně je platí, fakticky se ale část odvodu vrací tam, odkud přišla — na splácení
+              dluhu tedy nepřispívá stejně jako někdo, jehož mzda vzniká mimo veřejné rozpočty.
+            </p>
+            <p>
+              Státní a komunální firmy jako ČEZ, České dráhy nebo dopravní podniky se{' '}
+              <strong>neodečítají</strong>, přestože je stát vlastní. Jejich zaměstnanci jsou
+              placeni z tržeb, ne z rozpočtu, takže na ně tenhle argument nesedí.
+            </p>
+            <p>
+              <strong>Je to hodnotová volba, ne účetní pravda.</strong> Proto je přepínač vidět a dá
+              se vypnout; s vypnutým se počítá se všemi pracujícími. Proti odečtení lze namítnout,
+              že veřejný sektor produkuje služby, které by si jinak někdo musel koupit, a že část
+              jeho zaměstnanců je placena i z jiných zdrojů než z veřejných rozpočtů.
+            </p>
+            <div className="doc-callout">
+              <strong>
+                Tohle je jediné číslo na webu, které zatím není ověřené proti primárnímu zdroji
+              </strong>{' '}
+              — a je také výrazně starší než ostatní, platí k{' '}
+              {czDate(dataset.publicSectorEmployed.asOf)}. Navíc pochází z jiné statistiky než počet
+              pracujících: ten je z výběrového šetření pracovních sil, tohle z evidence sektoru
+              vládních institucí. Metodiky se přesně nepřekrývají, takže rozdíl je řádově správný,
+              ale ne přesný na jednotky.
+            </div>
+
             <h3>Náklad, který vzniká letošním schodkem</h3>
             <p>
               Schodek rozpočtu ({czkRounded(dataset.budgetDeficit.value)}) se násobí průměrným
@@ -185,8 +226,8 @@ export function Informace() {
 
             <h3>Zdroje všech vstupních hodnot</h3>
             <p>
-              Web nepočítá z ničeho jiného než z těchto jedenácti čísel. Každé má uvedený zdroj i
-              datum platnosti.
+              Web nepočítá z ničeho jiného než z těchto {entries.length} čísel. Každé má uvedený
+              zdroj i datum platnosti.
             </p>
 
             <div className="doc-table">
@@ -218,7 +259,10 @@ export function Informace() {
               </table>
             </div>
 
-            <p>Všechny hodnoty naposledy zkontrolovány {czDate(dataset.checkedAt)}.</p>
+            <p>
+              Hodnoty naposledy zkontrolovány {czDate(dataset.checkedAt)} — s výjimkou počtu
+              zaměstnanců veřejného sektoru, viz poznámka u něj.
+            </p>
           </section>
 
           {/* -------------------------------------------------- soukromí */}

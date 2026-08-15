@@ -59,6 +59,32 @@ stránce se ale neuvádí, viz výše).
 Skutečný přírůstek je tak jako tak nerovnoměrný — dluh roste skokově podle
 emisního kalendáře, ne plynule.
 
+### Odečtení zaměstnanců veřejného sektoru
+
+Záložka **Pracující občan** má přepínač „Bez zaměstnanců veřejného sektoru“,
+který je **ve výchozím stavu zapnutý**. Od 5 283,9 tis. pracujících odečítá
+942,8 tis. zaměstnanců sektoru vládních institucí (S.13) — stát, kraje, obce,
+příspěvkové organizace, veřejné vysoké školy a zdravotní pojišťovny. Zbývá
+4 341,1 tis. lidí.
+
+Argument: mzda takového zaměstnance je výdajem téhož rozpočtu, do kterého
+odvádí daně. Formálně je platí, fakticky se část odvodu vrací tam, odkud
+přišla.
+
+**Státní a komunální firmy se neodečítají** (ČEZ, ČD, dopravní podniky).
+Jsou sice ve vlastnictví státu nebo obcí, ale jejich zaměstnanci jsou placeni
+z tržeb, ne z rozpočtu — na ně argument nesedí. Proto S.13, ne „veřejný
+sektor“ v širším smyslu, kde by číslo bylo kolem 1 milionu.
+
+Je to **hodnotová volba, ne účetní pravda**, a stránka to tak i píše. Proto je
+přepínač vidět a jde vypnout — vypnutý počítá se všemi pracujícími.
+
+> ⚠️ **Číslo 942,8 tis. zatím není ověřené proti primárnímu zdroji** a je
+> výrazně starší než zbytek datasetu (průměr za rok 2021). Navíc pochází
+> z jiné statistiky než počet pracujících — ten je z VŠPS, tohle z evidence
+> S.13, metodiky se přesně nepřekrývají. Rozdíl je řádově správný, ne přesný
+> na jednotky. **Před dalším publikováním ověřit u NRR nebo ČSÚ.**
+
 ### Co se záměrně nepočítá
 
 - Jde o **státní dluh**, ne o dluh sektoru vládních institucí (maastrichtský).
@@ -118,6 +144,7 @@ samy, takže na aktualizaci stačí přepsat hodnoty a `checkedAt`.
 | skutečný schodek | měsíčně | [MF – plnění státního rozpočtu](https://mf.gov.cz/cs/rozpoctova-politika/statni-rozpocet/plneni-statniho-rozpoctu) |
 | počet obyvatel, zaměstnanost | čtvrtletně | [ČSÚ](https://csu.gov.cz/) |
 | výnos dluhopisu | průběžně | ČNB |
+| zaměstnanci sektoru vládních institucí | ročně — **neověřeno, viz výše** | [NRR](https://www.rozpoctovarada.cz/publikace/informacni-studie-vyvoj-poctu-zamestnancu-v-sektoru-vladnich-instituci/) |
 
 Pokud odhad přeroste horizont projekce, stránka i API to samy přiznají
 příznakem `zaProjekci` a hláškou v hlavičce.
@@ -129,8 +156,13 @@ příznakem `zaProjekci` a hláškou v hlavičce.
 ```
 GET /api/dluh
 GET /api/dluh?zaklad=pracujici
+GET /api/dluh?zaklad=pracujici&verejnySektor=zapocitat
 GET /api/dluh?t=2026-12-31T23:59:59Z
 ```
+
+`verejnySektor` je `vynechat` (výchozí) nebo `zapocitat` a uplatní se jen
+u `zaklad=pracujici`. Výchozí hodnota schválně odpovídá výchozímu stavu
+přepínače na stránce, aby web a API nikdy neukázaly jiné číslo.
 
 Bez klíče, bez limitu, CORS otevřený. Odpověď obsahuje aktuální odhad, všechny
 čtyři metriky včetně rozepsaného vzorce, kontextová čísla a kompletní seznam

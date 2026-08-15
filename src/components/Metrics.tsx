@@ -1,5 +1,12 @@
 import { Users, Percent, TrendingUp, Landmark, type LucideIcon } from 'lucide-react';
-import { BASIS_LABELS, metrics, type Basis } from '../../shared/model';
+import {
+  BASIS_LABELS,
+  metrics,
+  privateSectorEmployed,
+  type Basis,
+  type PublicSector,
+} from '../../shared/model';
+import { dataset } from '../../shared/dataset';
 import { czk, czkRounded } from '../../shared/format';
 import { Explain } from './Explain';
 
@@ -19,12 +26,21 @@ const BASES: Basis[] = ['obyvatel', 'pracujici'];
 interface MetricsProps {
   basis: Basis;
   onBasisChange: (basis: Basis) => void;
+  publicSector: PublicSector;
+  onPublicSectorChange: (publicSector: PublicSector) => void;
   /** Aktuální dluh — metriky se přepočítávají spolu s počítadlem. */
   now: number;
 }
 
-export function Metrics({ basis, onBasisChange, now }: MetricsProps) {
-  const items = metrics(basis, now);
+export function Metrics({
+  basis,
+  onBasisChange,
+  publicSector,
+  onPublicSectorChange,
+  now,
+}: MetricsProps) {
+  const items = metrics(basis, publicSector, now);
+  const excluded = publicSector === 'vynechat';
 
   return (
     <section className="panel" aria-labelledby="prepocet">
@@ -49,6 +65,49 @@ export function Metrics({ basis, onBasisChange, now }: MetricsProps) {
         ))}
       </div>
 
+      {/* Přepínač patří jen k pracujícím — u obyvatel se nikdo neodečítá. */}
+      {basis === 'pracujici' && (
+        <div className="scope">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={excluded}
+            aria-controls="metriky"
+            className="scope-switch"
+            onClick={() => onPublicSectorChange(excluded ? 'zapocitat' : 'vynechat')}
+          >
+            <span className="scope-track" aria-hidden="true">
+              <span className="scope-thumb" />
+            </span>
+            Bez zaměstnanců veřejného sektoru
+          </button>
+
+          <Explain label="Co přepínač dělá">
+            {excluded ? (
+              <>
+                <span className="explain-formula">
+                  Odečteni zaměstnanci veřejného sektoru — lidé placení z veřejných rozpočtů.
+                </span>
+                <span className="explain-substitution">
+                  {czk(dataset.employed.value)} − {czk(dataset.publicSectorEmployed.value)} ={' '}
+                  {czk(privateSectorEmployed)} pracujících
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="explain-formula">
+                  Započítáni všichni pracující, tedy i zaměstnanci veřejného sektoru.
+                </span>
+                <span className="explain-substitution">
+                  {czk(dataset.employed.value)} pracujících, z toho{' '}
+                  {czk(dataset.publicSectorEmployed.value)} ve veřejném sektoru
+                </span>
+              </>
+            )}
+          </Explain>
+        </div>
+      )}
+
       <ul className="metrics" id="metriky" role="tabpanel" aria-labelledby={`tab-${basis}`}>
         {items.map((metric) => {
           const Icon = ICONS[metric.id] ?? Landmark;
@@ -67,7 +126,12 @@ export function Metrics({ basis, onBasisChange, now }: MetricsProps) {
                     {display}
                   </span>
                   {metric.unit === 'ročně' && <span className="per"> / rok</span>}
-                  <Explain formula={metric.formula} substitution={metric.substitution} />
+                  <Explain>
+                    <span className="explain-formula">{metric.formula}</span>
+                    <span className="explain-substitution" suppressHydrationWarning>
+                      {metric.substitution}
+                    </span>
+                  </Explain>
                 </div>
                 <p className="metric-label">{metric.label}</p>
               </div>

@@ -4,7 +4,13 @@
  */
 
 import { dataset } from './dataset';
-import { snapshot, growthPerSecond, type Basis } from './model';
+import {
+  snapshot,
+  growthPerSecond,
+  DEFAULT_PUBLIC_SECTOR,
+  type Basis,
+  type PublicSector,
+} from './model';
 
 export interface ApiResponse {
   status: number;
@@ -13,6 +19,7 @@ export interface ApiResponse {
 }
 
 const BASES: Basis[] = ['obyvatel', 'pracujici'];
+const PUBLIC_SECTORS: PublicSector[] = ['vynechat', 'zapocitat'];
 
 function json(status: number, payload: unknown): ApiResponse {
   return {
@@ -31,7 +38,7 @@ function json(status: number, payload: unknown): ApiResponse {
 }
 
 /**
- * `GET /api/dluh?zaklad=obyvatel|pracujici`
+ * `GET /api/dluh?zaklad=obyvatel|pracujici&verejnySektor=vynechat|zapocitat`
  *
  * Vrací aktuální odhad dluhu, všechny čtyři metriky, kontext a kompletní
  * seznam zdrojů. Volitelně `?t=<ISO datum>` pro hodnotu k jinému okamžiku.
@@ -41,6 +48,15 @@ export function handleApiRequest(url: URL): ApiResponse {
   if (!BASES.includes(rawBasis as Basis)) {
     return json(400, {
       chyba: `Neznámý základ "${rawBasis}". Povolené hodnoty: ${BASES.join(', ')}.`,
+    });
+  }
+
+  // Výchozí hodnota je stejná jako výchozí stav přepínače na stránce,
+  // aby web a API nikdy neukázaly jiné číslo.
+  const rawPublicSector = url.searchParams.get('verejnySektor') ?? DEFAULT_PUBLIC_SECTOR;
+  if (!PUBLIC_SECTORS.includes(rawPublicSector as PublicSector)) {
+    return json(400, {
+      chyba: `Neznámá hodnota "${rawPublicSector}" parametru "verejnySektor". Povolené hodnoty: ${PUBLIC_SECTORS.join(', ')}.`,
     });
   }
 
@@ -55,12 +71,14 @@ export function handleApiRequest(url: URL): ApiResponse {
   }
 
   return json(200, {
-    ...snapshot(rawBasis as Basis, now),
+    ...snapshot(rawBasis as Basis, rawPublicSector as PublicSector, now),
     upozorneni:
       'Hodnota dluhu je odhad, ne měření. Přesná čísla publikuje MF ČR čtvrtletně — viz pole "zdroje".',
     dokumentace: {
       parametry: {
         zaklad: 'obyvatel (výchozí) | pracujici — na koho se dluh přepočítává',
+        verejnySektor:
+          'vynechat (výchozí) | zapocitat — zda se od počtu pracujících odečtou zaměstnanci veřejného sektoru. Uplatní se jen u zaklad=pracujici.',
         t: 'volitelné, ISO 8601 — hodnota k jinému okamžiku',
       },
       rustZaSekundu: growthPerSecond,
